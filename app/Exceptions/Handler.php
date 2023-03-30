@@ -49,5 +49,57 @@ final class Handler extends ExceptionHandler
 //        });
     }
 
+    /**
+     * @param Request $request
+     * @param $e
+     *
+     * @return Response
+     *
+     * @throws Throwable
+     */
+    public function render($request, Throwable $e): Response
+    {
+        if ($e instanceof ValidationException) {
+            return $this->renderValidationError($e);
+        }
+        if ($e instanceof ModelNotFoundException) {
+            return $this->renderModelNotFoundError($e);
+        }
 
+        return parent::render($request, $e);
+    }
+
+    /**
+     * @param ValidationException $e
+     *
+     * @return JsonResponse
+     */
+    private function renderValidationError(ValidationException $e): JsonResponse
+    {
+        return \Illuminate\Http\Response::api(
+            Response::HTTP_UNPROCESSABLE_ENTITY,
+            0,
+            [],
+            'Failed Validation',
+            $e->validator->errors(),
+        );
+    }
+
+    /**
+     * @param ModelNotFoundException $e
+     *
+     * @return JsonResponse
+     */
+    private function renderModelNotFoundError(ModelNotFoundException $e): JsonResponse
+    {
+        $model = explode('\\', $e->getModel());
+        $model = $model[count($model) - 1];
+        return \Illuminate\Http\Response::api(
+            Response::HTTP_NOT_FOUND,
+            0,
+            [],
+            $model . ' not found',
+            [],
+        );
+    }
 }
