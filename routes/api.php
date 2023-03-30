@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\RegisterController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\User;
@@ -21,9 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::prefix('admin')->group(function () {
-        Route::post('create', [RegisterController::class, 'create'])->name('create');
-        Route::post('login', [LoginController::class, 'login'])->name('login');
-        Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+        Route::post('create', [AuthController::class, 'create'])->name('create');
+        Route::post('login', [AuthController::class, 'login'])->name('login');
+        Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::middleware(['jwt'])->name('user')->group(function () {
             Route::get('user-listing', [UserController::class, 'index'])
