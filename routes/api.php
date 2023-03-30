@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::prefix('admin')->group(function () {
-
         Route::post('create', [RegisterController::class, 'create'])->name('create');
         Route::post('login', [LoginController::class, 'login'])->name('login');
         Route::get('logout', [LoginController::class, 'logout'])->name('logout');
@@ -40,4 +39,8 @@ Route::prefix('v1')->group(function () {
                 ->name('delete');
         });
     })->name('admin.');
+
+    Route::prefix('user')->group(function () {
+        Route::post('create', [\App\Http\Controllers\User\RegisterController::class, 'create']);
+    });
 });
