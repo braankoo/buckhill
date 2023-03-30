@@ -9,6 +9,15 @@ final class UserResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        if (count($this->additional)) {
+            return array_merge($this->default(), $this->additional);
+        }
+
+        return $this->default();
+    }
+
+    private function default(): array
+    {
         return [
             'uuid' => $this->uuid,
             'first_name' => $this->first_name,
