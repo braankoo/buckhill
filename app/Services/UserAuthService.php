@@ -8,12 +8,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Lcobucci\JWT\Token;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class RegisterUser
+class UserAuthService
 {
 
     public function create(Request $request, string $resource, bool $isAdmin): JsonResource|false
@@ -37,11 +39,29 @@ class RegisterUser
             $resource->additional(['token' => $token->toString()]);
             return $resource;
         } catch (\Throwable $e) {
-            dd($e);
             Log::debug('Error while creating new regular user', [$e->getMessage(), $e->getTrace()]);
             return false;
-
         }
+    }
+
+    public function login(Request $request): Token|false
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return Jwt::provideToken($user);
+        }
+        return false;
+    }
+
+    public function logout(Request $request): array
+    {
+        $token = Jwt::parseToken($request->bearerToken());
+
+        $userUuid = $token->claims()->get('user_uuid');
+        $tokenId = $token->claims()->get('jti');
+        return [$userUuid, $tokenId];
     }
 
 }
