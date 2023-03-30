@@ -30,6 +30,17 @@ final class CreateRequest extends FormRequest
             'password' => ['required', new Password(8)],
             'address' => 'required',
             'phone_number' => 'required',
+            'is_marketing' => 'nullable|boolean'
         ];
     }
+
+    public function safe(array $keys = null): \Illuminate\Support\ValidatedInput|array
+    {
+        $data = parent::safe($keys);
+        if (is_null('is_marketing')) {
+            $data['is_marketing'] = 0;
+        }
+        return $data;
+    }
+
 }

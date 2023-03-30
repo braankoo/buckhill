@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+
 /**
  *
  */
@@ -233,13 +234,12 @@ final class UserController extends Controller
     public function update(User $user, UpdateRequest $request): JsonResponse
     {
         $attributes = $request->safe()->all();
-        if (is_null($attributes['is_marketing'])) {
-            unset($attributes['is_marketing']);
-        }
+
         $user->update($attributes);
 
         return Response::api(HttpResponse::HTTP_OK, 1, new UserResource($user));
     }
+
     /**
      * @OA\Delete(
      *     path="/api/v1/admin/user-listing/{uuid}",
