@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Services\Auth\JWT\JWT;
 use App\Services\Auth\JWT\LcobucciJWT;
-use App\Services\RegisterUser;
+use App\Services\UserAuthService;
 use Illuminate\Http\Response;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
@@ -26,8 +26,8 @@ final class AppServiceProvider extends ServiceProvider
             return new LcobucciJWT();
         });
 
-        $this->app->bind(RegisterUser::class, function () {
-            return new RegisterUser();
+        $this->app->bind(UserAuthService::class, function () {
+            return new UserAuthService();
         });
     }
 }
