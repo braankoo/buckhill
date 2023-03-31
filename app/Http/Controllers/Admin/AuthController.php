@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Facades\Jwt;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateRequest;
 use App\Http\Resources\AdminResource;
@@ -11,7 +10,6 @@ use App\Services\UserAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
@@ -161,7 +159,7 @@ final class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $token = $this->userAuthService->login($request);
+        $token = $this->userAuthService->login($request, true);
         if (!$token) {
             return Response::api(HttpResponse::HTTP_UNPROCESSABLE_ENTITY, 0, [], 'Failed to authenticate user');
         }

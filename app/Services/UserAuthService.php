@@ -44,15 +44,39 @@ class UserAuthService
         }
     }
 
-    public function login(Request $request): Token|false
+    public function login(Request $request, bool $admin = false): Token|false
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return Jwt::provideToken($user);
+        if (!Auth::attempt($credentials)) {
+            return false;
         }
-        return false;
+
+        $user = Auth::user();
+
+        if ($admin && !$user->is_admin) {
+            return false;
+        }
+        try {
+            DB::beginTransaction();
+            $token = Jwt::provideToken($user);
+            $user->tokens()->updateOrCreate(
+                [
+                    'unique_id' => $token->claims()->get('jti'),
+                    'token_title' => 'access',
+                    'user_id' => $user->id,
+                ],
+                [
+                    'expires_at' => $token->claims()->get('exp'),
+                ]
+            );
+            DB::commit();
+        } catch (\Throwable $e) {
+            Log::debug('Error while logging in', [$e->getMessage(), $e->getTrace()]);
+            return false;
+        }
+
+        return $token;
     }
 
     public function logout(Request $request): array
