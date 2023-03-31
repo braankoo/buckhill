@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\RegisterController;
-use App\Http\Controllers\Admin\UserController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,27 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    Route::prefix('admin')->group(function () {
-        Route::post('create', [AuthController::class, 'create'])->name('create');
-        Route::post('login', [AuthController::class, 'login'])->name('login');
-        Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-
-        Route::middleware(['jwt'])->name('user')->group(function () {
-            Route::get('user-listing', [UserController::class, 'index'])
-                ->can('viewAny', User::class)
-                ->name('index');
-
-            Route::put('user-listing/{user}', [UserController::class, 'update'])
-                ->can('update', User::class)
-                ->name('update');
-
-            Route::delete('user-listing/{user}', [UserController::class, 'destroy'])
-                ->can('delete', User::class)
-                ->name('delete');
-        });
-    })->name('admin.');
-
-    Route::prefix('user')->group(function () {
-        Route::post('create', [\App\Http\Controllers\User\RegisterController::class, 'create']);
-    });
+    $routeFiles = File::files(__DIR__.'/api');
+    foreach ($routeFiles as $routeFile) {
+        require $routeFile->getPathname();
+    }
 });

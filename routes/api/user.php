@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\User\AuthController;
 
 Route::prefix('user')->group(function () {

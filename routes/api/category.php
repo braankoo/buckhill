@@ -1,2 +1,5 @@
 <?php
-Route::apiResource('category', \App\Http\Controllers\CategoryController::class);
+
+use App\Http\Controllers\CategoryController;
+
+Route::apiResource('category', CategoryController::class);
