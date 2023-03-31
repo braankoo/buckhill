@@ -6,9 +6,12 @@ namespace App\Models;
 use App\Models\Helpers\UuidHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Builder;
+
 
 /**
  *
@@ -67,9 +70,26 @@ final class User extends Authenticatable
         return $this->hasMany(JwtToken::class);
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function payments(): HasManyThrough
+    {
+        return $this->hasManyThrough(Payment::class, Order::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
         UuidHelper::boot(new static());
+    }
+
+    public function scopeHasToken(Builder $query, int $tokenId): void
+    {
+        $query->whereHas('tokens', function ($q) use ($tokenId) {
+            $q->where('unique_id', '=', $tokenId);
+        });
     }
 }
