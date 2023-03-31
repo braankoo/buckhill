@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 final class Jwt
 {
+
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken();
@@ -19,18 +20,24 @@ final class Jwt
             return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
         }
 
+
         try {
             $token = \App\Facades\Jwt::parseToken($token);
+            $tokenId = $token->claims()->get('jti');
+            $userUuid = $token->claims()->get('user_uuid');
+
+            if ($token->claims()->get('exp') < new \DateTimeImmutable()) {
+                return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
+            }
+
+            if (!$user = User::where('uuid', '=', $userUuid)->hasToken($tokenId)->first()) {
+                return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
+            }
+
+            Auth::setUser($user);
         } catch (\Exception $e) {
             return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
         }
-
-        if ($token->claims()->get('exp') < new \DateTimeImmutable()) {
-            return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
-        }
-
-        $userUuid = $token->claims()->get('user_uuid');
-        Auth::setUser(User::where('uuid', '=', $userUuid)->first());
 
         return $next($request);
     }
