@@ -19,7 +19,7 @@ class OrderStatusFactory extends Factory
     {
         return [
             'uuid' => Str::uuid(),
-            'title' => fake()->words(2, true)
+            'title' => ['open', 'pending payment', 'paid', 'shipped', 'cancelled'][rand(0, 4)]
         ];
     }
 }
