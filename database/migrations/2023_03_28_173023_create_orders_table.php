@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->float('amount');
             $table->timestamps();
             $table->timestamp('shipped_at')->nullable();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('order_status_id')->references('id')->on('order_statuses');
             $table->foreignId('payment_id')->references('id')->on('payments');
         });

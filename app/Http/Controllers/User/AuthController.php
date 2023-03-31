@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Facades\Jwt;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Services\RegisterUser;
-use Illuminate\Http\Request;
+use App\Services\UserAuthService;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
@@ -99,7 +93,7 @@ class RegisterController extends Controller
      */
     public function create(CreateRequest $request)
     {
-        $registerService = app(RegisterUser::class);
+        $registerService = app(UserAuthService::class);
         $user = $registerService->create($request, UserResource::class, 0);
         if (!$user) {
             return Response::api(HttpResponse::HTTP_INTERNAL_SERVER_ERROR, 0, []);

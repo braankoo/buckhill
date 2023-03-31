@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->json('metadata');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignUuid('category_uuid')->references('uuid')->on('categories');
+            $table->foreignUuid('category_uuid')->references('uuid')->on('categories')->onDelete('cascade');
         });
     }
 
