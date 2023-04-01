@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\User\CreateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -103,11 +104,13 @@ class AuthController extends Controller
      */
     public function create(CreateRequest $request)
     {
-        $user = $this->userAuthService->create($request, UserResource::class, 0);
+
+        $attributes = $request->safe()->merge(['is_admin' => 0])->all();
+        $user = $this->userAuthService->create($attributes, UserResource::class, 0);
         if (!$user) {
             return Response::api(HttpResponse::HTTP_INTERNAL_SERVER_ERROR, 0, []);
         }
-        return Response::api(HttpResponse::HTTP_CREATED, 1, $user);
+        return Response::api(HttpResponse::HTTP_OK, 1, $user);
     }
 
     /**
@@ -155,11 +158,12 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function login(\Illuminate\Http\Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $token = $this->userAuthService->login($request);
+        $attr = $request->safe()->all();
+        $token = $this->userAuthService->login($attr['email'], $attr['password']);
         if (!$token) {
-            return Response::api(HttpResponse::HTTP_UNPROCESSABLE_ENTITY, 0, [], 'Failed to authenticate user');
+            return Response::api(HttpResponse::HTTP_UNAUTHORIZED, 0, [], 'Failed to authenticate user');
         }
         return Response::api(HttpResponse::HTTP_OK, 1, ['token' => $token->toString()]);
     }
