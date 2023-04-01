@@ -56,6 +56,7 @@ final class LcobucciJWT implements JWT
             ->issuedAt($now)
             ->expiresAt($now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds'))
             ->withClaim('user_uuid', $user->uuid)
+            ->withClaim('user_level', $user->is_admin ? 'admin' : 'user')
             ->getToken($configuration->signer(), $configuration->signingKey());
     }
 }

@@ -3,19 +3,15 @@
 namespace App\Services;
 
 use App\Facades\Jwt;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Token;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class UserAuthService
+class TokenService
 {
 
     public function create(
@@ -44,7 +40,7 @@ class UserAuthService
         }
     }
 
-    public function login(User $user, bool $admin = false): Token|false
+    public function login(User $user): Token|false
     {
         try {
             DB::beginTransaction();

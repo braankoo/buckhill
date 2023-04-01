@@ -12,7 +12,8 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 final class Jwt
 {
 
-    public function handle(Request $request, Closure $next): Response
+
+    public function handle(Request $request, Closure $next, string $userLevel = 'user'): Response
     {
         $token = $request->bearerToken();
 
@@ -25,8 +26,13 @@ final class Jwt
             $token = \App\Facades\Jwt::parseToken($token);
             $tokenId = $token->claims()->get('jti');
             $userUuid = $token->claims()->get('user_uuid');
+            $userLevelToken = $token->claims()->get('user_level');
 
-            if ($token->claims()->get('exp') < new \DateTimeImmutable()) {
+            if (
+                $token->claims()->get('exp') < new \DateTimeImmutable()
+                || $userLevelToken !== $userLevel
+
+            ) {
                 return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
             }
 
