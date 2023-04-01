@@ -18,13 +18,13 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 class UserAuthService
 {
 
-    public function create(Request $request, string $resource, bool $isAdmin): JsonResource|false
-    {
-        $attributes = $request->safe()->merge(['is_admin' => $isAdmin])->all();
-        $attributes['password'] = Hash::make($attributes['password']);
+    public function create(
+        array $attributes,
+        string $resource,
+    ): JsonResource|false {
         try {
             DB::beginTransaction();
-
+            $attributes['password'] = Hash::make($attributes['password']);
             $user = User::create($attributes);
             $token = Jwt::provideToken($user);
 
@@ -44,19 +44,8 @@ class UserAuthService
         }
     }
 
-    public function login(Request $request, bool $admin = false): Token|false
+    public function login(User $user, bool $admin = false): Token|false
     {
-        $credentials = $request->only('email', 'password');
-
-        if (!Auth::attempt($credentials)) {
-            return false;
-        }
-
-        $user = Auth::user();
-
-        if ($admin && !$user->is_admin) {
-            return false;
-        }
         try {
             DB::beginTransaction();
             $token = Jwt::provideToken($user);
