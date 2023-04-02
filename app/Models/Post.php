@@ -11,7 +11,7 @@ final class Post extends Model
     use HasFactory;
 
 
-    public function getRouteKey()
+    public function getRouteKeyName()
     {
         return 'uuid';
     }
