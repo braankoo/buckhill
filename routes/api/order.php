@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\OrderController;
 
-Route::apiResource('order', OrderController::class)->middleware('jwt');
-Route::get('order/{order}/download', [OrderController::class, 'download'])->middleware('jwt');
-Route::get('orders/shipment-locator', [OrderController::class, 'shipmentLocator'])->middleware('jwt');
-Route::get('orders/dashboard', [OrderController::class, 'shipmentLocator'])->middleware('jwt');
+Route::apiResource('order', OrderController::class);
+
+Route::name('orders.')->prefix('orders')->group(function () {
+    Route::get('{order}/download', [OrderController::class, 'download'])->name('download');
+    Route::get('shipment-locator', [OrderController::class, 'shipmentLocator'])->name('locator');
+    Route::get('dashboard', [OrderController::class, 'dashboard'])->name('dashboard');
+});
+
