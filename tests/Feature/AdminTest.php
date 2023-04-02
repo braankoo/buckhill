@@ -2,24 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Facades\Jwt;
 use App\Models\User;
 use App\Services\TokenService;
-use App\Services\UserAuthService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
 
-class AdminTest extends TestCase
+class AdminTest extends Base
 {
-    use DatabaseTransactions;
-    use DatabaseMigrations;
-
-    /**
-     * A basic feature test example.
-     */
     public function test_create(): void
     {
         $response = $this->post(route('admin.create'), [
@@ -38,7 +25,7 @@ class AdminTest extends TestCase
 
     public function test_login()
     {
-        $user = User::factory()->create(['is_admin' => 1]);
+        $user = $this->getAdminUser();
 
         $response = $this->post(route('admin.login'), [
             'email' => $user->email,
@@ -51,7 +38,7 @@ class AdminTest extends TestCase
 
     public function test_login_regular_user()
     {
-        $user = User::factory()->create(['is_admin' => 0]);
+        $user = $this->getRegularUser();
         $response = $this->post(route('admin.login'), [
             'email' => $user->email,
             'password' => 'password'
@@ -62,43 +49,27 @@ class AdminTest extends TestCase
 
     public function test_user_listing_with_admin_user()
     {
-        $user = User::factory()->create(['is_admin' => 1]);
-        $token = app(TokenService::class)->login($user, true);
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->get(route('admin.user.index'));
-
-
-        $response->assertStatus(200);
+        $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getAdminUser(), true)
+        )->get(route('admin.user.index'))->assertStatus(200);
     }
 
     public function test_user_listing_with_regular_user()
     {
-        $user = User::factory()->create(['is_admin' => 0]);
-        $token = app(TokenService::class)->login($user, true);
+        $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getRegularUser(), true)
+        )->get(route('admin.user.index'))->assertStatus(401);
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->get(route('admin.user.index'));
-
-
-        $response->assertStatus(401);
     }
 
     public function test_user_to_update_with_admin()
     {
-        $user = User::factory()->create(['is_admin' => 1]);
-        $userToUpdate = User::factory()->create(['is_admin' => 0]);
-        $token = app(TokenService::class)->login($user, true);
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->put(
+        $user = User::factory()->create();
+        $response = $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getAdminUser(), true)
+        )->put(
             route('admin.user.update', [
-                'user' => $userToUpdate->uuid
+                'user' => $user->uuid
             ]),
             [
                 'first_name' => 'name',
@@ -109,6 +80,6 @@ class AdminTest extends TestCase
             ]
         );
         $response = json_decode($response->getContent(), true);
-        self::assertNotEquals($userToUpdate->first_name, $response['data']['first_name']);
+        self::assertNotEquals($user->first_name, $response['data']['first_name']);
     }
 }
