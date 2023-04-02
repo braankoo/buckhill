@@ -3,19 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Models\Product;
+
 use App\Models\User;
 use App\Services\TokenService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class CategoryTest extends TestCase
+
+class CategoryTest extends Base
 {
-    use DatabaseTransactions;
-    use DatabaseMigrations;
 
     public function test_index(): void
     {
@@ -33,14 +27,10 @@ class CategoryTest extends TestCase
 
     public function test_put_admin_user()
     {
-        $user = User::factory()->create(['is_admin' => 1]);
         $category = Category::factory()->create();
-        $token = app(TokenService::class)->login($user, true);
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->put(
+        $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getAdminUser(), true)
+        )->put(
             route(
                 'category.update',
                 [
@@ -48,20 +38,15 @@ class CategoryTest extends TestCase
                 ]
             ),
             ['category' => $category->uuid]
-        );
-        $response->assertStatus(401);
+        )->assertStatus(401);
     }
 
     public function test_put_regular_user()
     {
-        $user = User::factory()->create(['is_admin' => 0]);
         $category = Category::factory()->create();
-        $token = app(TokenService::class)->login($user, true);
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->put(
+        $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getRegularUser(), true)
+        )->put(
             route(
                 'category.update',
                 [
@@ -71,8 +56,7 @@ class CategoryTest extends TestCase
             [
                 'title' => '123123123'
             ]
-        );
-        $response->assertStatus(200);
-        self::assertEquals(Category::where('id', '=', $category->id)->first()->title, '123123123');
+        )->assertStatus(200);
+        self::assertEquals(Category::find($category)->first()->title, '123123123');
     }
 }
