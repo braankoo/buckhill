@@ -42,7 +42,6 @@ class ProductTest extends Base
         $brand = Brand::factory()->create();
         $file = File::factory()->create();
 
-
         $this->httpRequestWithToken(
             app(TokenService::class)->login($this->getRegularUser(), true)
         )->put(
@@ -58,9 +57,9 @@ class ProductTest extends Base
                 'description' => 'test',
                 'title' => '123123123',
                 'metadata' => json_encode([
-                    "brand" => $brand->uuid,
-                    "image" => $file->uuid
-                ])
+                    'brand' => $brand->uuid,
+                    'image' => $file->uuid,
+                ]),
             ]
         )->assertStatus(200);
         self::assertEquals('123123123', Product::find($product)->first()->title);
@@ -69,7 +68,6 @@ class ProductTest extends Base
     public function test_destroy_regular_user()
     {
         $product = Product::factory()->complete()->create();
-
 
         $this->httpRequestWithToken(
             app(TokenService::class)->login($this->getRegularUser(), true)
@@ -80,7 +78,7 @@ class ProductTest extends Base
                     'product' => $product->uuid,
                 ]
             )
-        )->assertStatus(200);;
+        )->assertStatus(200);
         self::assertEquals(0, Product::find($product)->count());
     }
 }

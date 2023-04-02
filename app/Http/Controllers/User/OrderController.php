@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 
-class OrderController extends Controller
+final class OrderController extends Controller
 {
     public function __construct()
     {
@@ -83,8 +83,10 @@ class OrderController extends Controller
         $data = $paginator->paginateRequest($request, $query);
         $data->getCollection()->transform(function ($value) {
             $value->products = json_decode($value->products, true);
+
             return $value;
         });
+
         return $data;
     }
 }

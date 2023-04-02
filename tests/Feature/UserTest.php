@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Services\TokenService;
 
 class UserTest extends Base
@@ -38,7 +37,7 @@ class UserTest extends Base
             route('user.login'),
             [
                 'email' => $user->email,
-                'password' => 'password'
+                'password' => 'password',
             ]
         )->assertStatus(200);
     }
@@ -50,7 +49,7 @@ class UserTest extends Base
             route('user.login'),
             [
                 'email' => $user->email,
-                'password' => 'password'
+                'password' => 'password',
             ]
         );
 

@@ -10,12 +10,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class CategoryController extends Controller
+final class CategoryController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('jwt')->only(['create', 'store', 'update']);
@@ -133,9 +133,9 @@ class CategoryController extends Controller
     public function store(StoreRequest $request): JsonResponse
     {
         $category = Category::create($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, $category);
     }
-
 
     /**
      * @OA\Get(
@@ -227,6 +227,7 @@ class CategoryController extends Controller
     public function update(UpdateRequest $request, Category $category): JsonResponse
     {
         $category->update($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, $category);
     }
 
@@ -267,6 +268,7 @@ class CategoryController extends Controller
     public function destroy(Category $category): JsonResponse
     {
         $category->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }

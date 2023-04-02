@@ -9,9 +9,8 @@ use Illuminate\Support\Str;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
-class FileController extends Controller
+final class FileController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('jwt')->only('store');
@@ -69,12 +68,12 @@ class FileController extends Controller
                 'name' => $file->getFilename(),
                 'path' => $path,
                 'size' => $file->getSize(),
-                'type' => $file->getMimeType()
+                'type' => $file->getMimeType(),
             ]
         );
+
         return Response::api(Response::HTTP_OK, '1', $file);
     }
-
 
     /**
      * @OA\Get(

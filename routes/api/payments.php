@@ -1,3 +1,5 @@
 <?php
 
-Route::apiResource('payment', \App\Http\Controllers\PaymentController::class);
+use App\Http\Controllers\PaymentController;
+
+Route::apiResource('payment', PaymentController::class);

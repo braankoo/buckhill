@@ -43,7 +43,7 @@ class OrderStatusesTest extends Base
         )->put(
             route('order-status.update', ['order_status' => $orderStatus->uuid]),
             [
-                'title' => '123123123'
+                'title' => '123123123',
             ]
         )->assertStatus(200);
         self::assertEquals(OrderStatus::find($orderStatus)->first()->title, '123123123');

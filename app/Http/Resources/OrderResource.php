@@ -2,23 +2,24 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class OrderResource extends JsonResource
+final class OrderResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+    public function __construct(Order $resource)
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request): array
     {
         return [
-            'products' => json_decode($this->products),
-            'address' => json_decode($this->address),
-            'amount' => $this->amount,
-            'uuid' => $this->uuid
+            'products' => json_decode($this->resource->products),
+            'address' => json_decode($this->resource->address),
+            'amount' => $this->resource->amount,
+            'uuid' => $this->resource->uuid,
         ];
     }
 }

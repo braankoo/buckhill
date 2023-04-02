@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests\Order;
 
-use App\Rules\ProductRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRequest extends FormRequest
+final class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,7 +29,7 @@ class UpdateRequest extends FormRequest
             'products.*.quantity' => 'integer',
             'address.billing' => 'required|string',
             'address.shipping' => 'required|string',
-            'amount' => 'numeric|required'
+            'amount' => 'numeric|required',
         ];
     }
 }

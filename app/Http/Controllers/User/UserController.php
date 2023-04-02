@@ -5,16 +5,13 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class UserController extends Controller
+final class UserController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('jwt');
@@ -52,10 +49,7 @@ class UserController extends Controller
         return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource(\Auth::user())]);
     }
 
-
     /**
-     *
-     *
      * @OA\Put(
      *     path="/api/v1/user/edit",
      *     tags={"User"},
@@ -136,6 +130,7 @@ class UserController extends Controller
     public function edit(UpdateRequest $request): JsonResponse
     {
         \Auth::user()->update($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource(\Auth::user())]);
     }
 

@@ -26,9 +26,9 @@ class PromotionFactory extends Factory
                 [
                     'valid_form' => Carbon::now()->subDays(rand(1, 60))->format('Y-m-d'),
                     'valid_to' => Carbon::now()->format('Y-m-d'),
-                    'image' => File::inRandomOrder()->first()->uuid
+                    'image' => File::inRandomOrder()->first()->uuid,
                 ]
-            )
+            ),
         ];
     }
 }

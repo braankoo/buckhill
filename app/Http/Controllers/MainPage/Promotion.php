@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 
-class Promotion extends Controller
+final class Promotion extends Controller
 {
     /**
      * @OA\Get(
@@ -76,8 +76,10 @@ class Promotion extends Controller
         $data = $paginator->paginateRequest($request, \App\Models\Promotion::query());
         $data->getCollection()->transform(function ($value) {
             $value->metadata = json_decode($value->metadata, true);
+
             return $value;
         });
+
         return $data;
     }
 }

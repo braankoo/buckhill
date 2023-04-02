@@ -26,12 +26,12 @@ class OrderFactory extends Factory
             'order_status_id' => OrderStatus::factory(),
             'address' => json_encode(
                 [
-                    "billing" => fake()->address(),
-                    "shipping" => fake()->address()
+                    'billing' => fake()->address(),
+                    'shipping' => fake()->address(),
                 ]
             ),
             'delivery_fee' => fake()->randomFloat(2, 5, 20),
-            'amount' => fake()->randomFloat(3, 4, 5000)
+            'amount' => fake()->randomFloat(3, 4, 5000),
         ];
     }
 
@@ -39,6 +39,7 @@ class OrderFactory extends Factory
     {
         return $this->state(function () {
             $product = Product::factory()->complete()->create();
+
             return [
                 'order_status_id' => OrderStatus::factory()->create(),
                 'payment_id' => Payment::factory()->create(),
@@ -46,10 +47,10 @@ class OrderFactory extends Factory
                     [
                         [
                             'product' => $product->uuid,
-                            'quantity' => rand(1, 30)
-                        ]
+                            'quantity' => rand(1, 30),
+                        ],
                     ]
-                )
+                ),
             ];
         });
     }

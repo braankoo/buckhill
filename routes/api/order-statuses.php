@@ -1,3 +1,5 @@
 <?php
 
-Route::apiResource('order-status', \App\Http\Controllers\OrderStatusController::class);
+use App\Http\Controllers\OrderStatusController;
+
+Route::apiResource('order-status', OrderStatusController::class);

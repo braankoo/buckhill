@@ -8,13 +8,13 @@ use App\Models\Payment;
 use App\Models\Product;
 use App\Services\TokenService;
 
-
 class OrderTest extends Base
 {
-
     public function test_index(): void
     {
+
         $response = $this->get(route('order.index'));
+
 
         $response->assertStatus(401);
     }
@@ -22,7 +22,7 @@ class OrderTest extends Base
     public function test_index_admin_user(): void
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            app(TokenService::class)->login($this->getAdminUser())
         )->get(route('order.index'))
             ->assertStatus(401);
     }
@@ -56,7 +56,7 @@ class OrderTest extends Base
             route(
                 'order.update',
                 [
-                    'order' => $order->uuid
+                    'order' => $order->uuid,
                 ]
             ),
             ['order' => $order->uuid]
@@ -74,7 +74,7 @@ class OrderTest extends Base
             route(
                 'order.update',
                 [
-                    'order' => $order->uuid
+                    'order' => $order->uuid,
                 ]
             ),
             [
@@ -86,8 +86,8 @@ class OrderTest extends Base
                 ),
                 'address' => [
                     'billing' => '123',
-                    'shipping' => '123'
-                ]
+                    'shipping' => '123',
+                ],
             ]
         );
         $response->assertStatus(200);
@@ -104,7 +104,7 @@ class OrderTest extends Base
             route(
                 'order.destroy',
                 [
-                    'order' => $order->uuid
+                    'order' => $order->uuid,
                 ]
             )
         );
@@ -122,12 +122,11 @@ class OrderTest extends Base
             route(
                 'orders.download',
                 [
-                    'order' => $order->uuid
+                    'order' => $order->uuid,
                 ]
             )
         );
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/pdf');
     }
-
 }

@@ -19,10 +19,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class OrderController extends Controller
+final class OrderController extends Controller
 {
     public function __construct()
     {
@@ -97,6 +98,7 @@ class OrderController extends Controller
         $data->getCollection()->transform(function ($value) {
             return new OrderResource($value);
         });
+
         return $data;
     }
 
@@ -182,7 +184,6 @@ class OrderController extends Controller
      *
      * @throws Throwable
      */
-
     public function store(CreateRequest $request)
     {
         $attributes = $request->safe()->all();
@@ -196,9 +197,10 @@ class OrderController extends Controller
                 'address' => json_encode($attributes['address'], true),
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
-                'payment_id' => $payment->id
+                'payment_id' => $payment->id,
             ]
         );
+
         return Response::api(HttpResponse::HTTP_OK, '1', new OrderResource($order));
     }
 
@@ -343,9 +345,10 @@ class OrderController extends Controller
                 'address' => json_encode($attributes['address'], true),
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
-                'payment_id' => $payment->id
+                'payment_id' => $payment->id,
             ]
         );
+
         return Response::api(HttpResponse::HTTP_OK, 1, new OrderResource($order));
     }
 
@@ -386,6 +389,7 @@ class OrderController extends Controller
     public function destroy(Order $order): JsonResponse
     {
         $order->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 
@@ -428,10 +432,9 @@ class OrderController extends Controller
         $products = json_decode($order->products, true);
 
         $productsAndQuantity = array_map(function ($product) {
-            return
-                [
+            return [
                     'product' => Product::firstWhere('uuid', '=', $product['product']),
-                    'quantity' => $product['quantity']
+                    'quantity' => $product['quantity'],
                 ];
         }, $products);
 
@@ -440,7 +443,7 @@ class OrderController extends Controller
             'productsAndQuantity' => $productsAndQuantity,
             'address' => json_decode($order->address),
             'amount' => $order->amount,
-            'uuid' => $order->uuid
+            'uuid' => $order->uuid,
         ];
 
         $pdf = Pdf::loadView('pdf.order', $data);
@@ -550,7 +553,6 @@ class OrderController extends Controller
      *     )
      * )
      */
-
     public function shipmentLocator(
         ShipmentLocatorRequest $request,
         Paginator $paginator
@@ -562,6 +564,7 @@ class OrderController extends Controller
         $query = $this->filterByFixedRange($request, $query);
 
         $data = $paginator->paginateRequest($request, $query);
+
         return $data->getCollection()->transform(function ($value) {
             return new OrderResource($value);
         });
@@ -637,6 +640,7 @@ class OrderController extends Controller
         $query = $this->filterByFixedRange($request, $query);
 
         $data = $paginator->paginateRequest($request, $query);
+
         return $data->getCollection()->transform(function ($value) {
             return new OrderResource($value);
         });
@@ -649,6 +653,7 @@ class OrderController extends Controller
         if ($request->has('orderUuid')) {
             $query->where('uuid', '=', $request->input('orderUuid'));
         }
+
         return $query;
     }
 
@@ -661,10 +666,11 @@ class OrderController extends Controller
                 'created_at',
                 [
                     Carbon::parse($request->input('dateRange')['from']),
-                    Carbon::parse($request->input('dateRange')['to'])
+                    Carbon::parse($request->input('dateRange')['to']),
                 ]
             );
         }
+
         return $query;
     }
 
@@ -673,18 +679,14 @@ class OrderController extends Controller
         Builder $query
     ): Builder {
         if ($request->has('fixedRange')) {
-            switch ($request->input('fixedRange')) {
-                case 'today':
-                    $query->where('created_at', '=', Carbon::today());
-                    break;
-                case 'monthly':
-                    $query->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()]);
-                    break;
-                case 'yearly':
-                    $query->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()]);
-                    break;
-            }
+            return match ($request->input('fixedRange')) {
+                'today' => $query->where('created_at', '=', Carbon::today()),
+                'monthly' => $query->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()]),
+                'yearly' => $query->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()]),
+                default => $query
+            };
         }
+
         return $query;
     }
 }

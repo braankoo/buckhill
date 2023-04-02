@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\ValidationException;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class ForgotPasswordController extends Controller
+final class ForgotPasswordController extends Controller
 {
     /**
      * @OA\Post(
@@ -59,7 +58,6 @@ class ForgotPasswordController extends Controller
 
         return Response::api(ResponseAlias::HTTP_OK, 1, ['token' => $token]);
     }
-
 
     /**
      * @OA\Post(
@@ -123,12 +121,13 @@ class ForgotPasswordController extends Controller
             }
         );
 
-        if ($response == Password::PASSWORD_RESET) {
+        if ($response === Password::PASSWORD_RESET) {
             return Response::api(ResponseAlias::HTTP_OK, 1, ['message' => 'Password has been successfully updated']);
-        } elseif ($response == Password::INVALID_TOKEN) {
-            return Response::api(ResponseAlias::HTTP_OK, 1, ['message' => 'Invalid or expired token']);
-        } else {
-            return Response::api(ResponseAlias::HTTP_BAD_REQUEST, 0, ['message' => 'Unable to reset password.']);
         }
+        if ($response === Password::INVALID_TOKEN) {
+            return Response::api(ResponseAlias::HTTP_OK, 1, ['message' => 'Invalid or expired token']);
+        }
+
+        return Response::api(ResponseAlias::HTTP_BAD_REQUEST, 0, ['message' => 'Unable to reset password.']);
     }
 }

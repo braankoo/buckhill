@@ -4,7 +4,7 @@ namespace App\Http\Requests\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DashboardRequest extends FormRequest
+final class DashboardRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class DashboardRequest extends FormRequest
         return [
             'dateRange.from' => 'date|required_with:dateRange.to',
             'dateRange.to' => 'date|required_with:dateRange.from|after_or_equal:dateRange.from',
-            'fixedRange' => 'in:today,monthly,yearly'
+            'fixedRange' => 'in:today,monthly,yearly',
         ];
     }
 }

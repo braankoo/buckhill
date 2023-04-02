@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\User;
 
-use App\Http\Requests\User\CreateRequest;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
@@ -35,12 +34,13 @@ final class UpdateRequest extends FormRequest
         ];
     }
 
-    public function safe(array $keys = null): \Illuminate\Support\ValidatedInput|array
+    public function safe(?array $keys = null): \Illuminate\Support\ValidatedInput|array
     {
         $data = parent::safe($keys);
         if (is_null('is_marketing')) {
             $data['is_marketing'] = 0;
         }
+
         return $data;
     }
 }

@@ -11,12 +11,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Token;
 
-class TokenService
+final class TokenService
 {
-
+    /**
+     * @param array{
+     *     first_name:string,
+     *     last_name:string,
+     *     is_admin:bool,
+     *     email:string,
+     *     address:string,
+     *     phone_number:string,
+     *     is_marketing: bool,
+     *     password: string} $attributes
+     * @param string $resource
+     *
+     * @return JsonResource|false
+     */
     public function create(
         array $attributes,
-        string $resource,
+        $resource,
     ): JsonResource|false {
         try {
             DB::beginTransaction();
@@ -33,9 +46,14 @@ class TokenService
             DB::commit();
             $resource = (new $resource($user));
             $resource->additional(['token' => $token->toString()]);
+
             return $resource;
         } catch (\Throwable $e) {
-            Log::debug('Error while creating new regular user', [$e->getMessage(), $e->getTrace()]);
+            Log::debug(
+                'Error while creating new regular user',
+                [$e->getMessage(), $e->getTrace()]
+            );
+
             return false;
         }
     }
@@ -57,7 +75,11 @@ class TokenService
             );
             DB::commit();
         } catch (\Throwable $e) {
-            Log::debug('Error while logging in', [$e->getMessage(), $e->getTrace()]);
+            Log::debug(
+                'Error while logging in',
+                [$e->getMessage(), $e->getTrace()]
+            );
+
             return false;
         }
 
@@ -70,7 +92,7 @@ class TokenService
 
         $userUuid = $token->claims()->get('user_uuid');
         $tokenId = $token->claims()->get('jti');
+
         return [$userUuid, $tokenId];
     }
-
 }

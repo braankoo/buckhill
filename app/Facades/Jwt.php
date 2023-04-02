@@ -10,7 +10,7 @@ use Lcobucci\JWT\UnencryptedToken;
 
 /**
  * @method static UnencryptedToken provideToken(Authenticatable $user)
- * @method static Token parseToken(string $token)
+ * @method static UnencryptedToken parseToken(string $token)
  */
 final class Jwt extends Facade
 {
@@ -18,5 +18,4 @@ final class Jwt extends Facade
     {
         return JWTInterface::class;
     }
-
 }

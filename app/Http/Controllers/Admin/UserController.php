@@ -14,11 +14,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-/**
- *
- */
 final class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt:admin');
+    }
     /**
      * @OA\Get(
      *     path="/api/v1/admin/user-listing",
@@ -131,10 +132,19 @@ final class UserController extends Controller
      *     )
      * )
      */
-    public function index(IndexRequest $request, Paginator $paginator): LengthAwarePaginator
-    {
+    public function index(
+        IndexRequest $request,
+        Paginator $paginator
+    ): LengthAwarePaginator {
         $query = User::where('is_admin', '=', 0);
-        $searchableFields = ['first_name', 'email', 'phone', 'address', 'created_at', 'is_marketing'];
+        $searchableFields = [
+            'first_name',
+            'email',
+            'phone',
+            'address',
+            'created_at',
+            'is_marketing',
+        ];
         foreach ($searchableFields as $field) {
             if ($request->has($field)) {
                 $query->where($field, '=', $request->input($field));
@@ -145,8 +155,6 @@ final class UserController extends Controller
     }
 
     /**
-     *
-     *
      * @OA\Put(
      *     path="/api/v1/admin/user-listing/{uuid}",
      *     tags={"Admin"},
@@ -277,6 +285,7 @@ final class UserController extends Controller
     public function destroy(User $user): JsonResponse
     {
         $user->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }

@@ -22,7 +22,7 @@ class FileFactory extends Factory
             'name' => fake()->name(),
             'path' => fake()->filePath(),
             'size' => fake()->numberBetween(100, 500),
-            'type' => fake()->mimeType()
+            'type' => fake()->mimeType(),
         ];
     }
 }

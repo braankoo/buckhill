@@ -13,8 +13,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class ProductController extends Controller
+final class ProductController extends Controller
 {
     public function __construct()
     {
@@ -86,6 +87,7 @@ class ProductController extends Controller
     public function index(Request $request, Paginator $paginator): Collection
     {
         $data = $paginator->paginateRequest($request, Product::query());
+
         return $data->getCollection()->transform(function ($value) {
             return new ProductResource($value);
         });
@@ -140,13 +142,12 @@ class ProductController extends Controller
      *
      * @throws Throwable
      */
-
     public function store(CreateRequest $request): JsonResponse
     {
         $payment = Product::create($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, new ProductResource($payment));
     }
-
 
     /**
      * @OA\Get(
@@ -236,12 +237,10 @@ class ProductController extends Controller
      *
      * @throws Throwable
      */
-    public
-    function update(
-        UpdateRequest $request,
-        Product $product
-    ): JsonResponse {
+    public function update(UpdateRequest $request, Product $product): JsonResponse
+    {
         $product->update($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, new ProductResource($product));
     }
 
@@ -282,6 +281,7 @@ class ProductController extends Controller
     public function destroy(Product $product): JsonResponse
     {
         $product->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }

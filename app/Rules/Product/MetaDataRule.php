@@ -7,35 +7,43 @@ use App\Models\File;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class MetaDataRule implements ValidationRule
+final class MetaDataRule implements ValidationRule
 {
+    /**
+     * @var array{string, string}
+     */
+    protected array $allowed = ['brand', 'image'];
 
-
-    protected $allowed = ['brand', 'image'];
-
-    public function validate(string $attribute, mixed $value, Closure $fail): void
-    {
+    public function validate(
+        string $attribute,
+        mixed $value,
+        Closure $fail
+    ): void {
         $values = json_decode($value, true);
 
         if (!is_array($values)) {
-            $fail('Metadata must be valid JSON');
-            return;
-        }
-        if (empty($values)) {
-            $fail('Metadata JSON cant be empty');
+            $fail("$attribute must be valid JSON");
+
             return;
         }
 
+        $missingKeys = array_diff($this->allowed, array_keys($values));
+        if (count($missingKeys) > 0) {
+            $fail("$attribute must contain " . implode(' and ', $missingKeys));
 
-        if (array_diff(array_keys($values), $this->allowed)) {
-            $fail('Metadata must contain brand and image');
             return;
         }
+
         if (!Brand::where('uuid', $values['brand'])->exists()) {
             $fail('Brand with given UUID does not exist.');
+
+            return;
         }
+
         if (!File::where('uuid', $values['image'])->exists()) {
             $fail('File with given UUID does not exist.');
+
+            return;
         }
     }
 

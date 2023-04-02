@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Brand;
+namespace App\Http\Requests\Admin\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class CreateRequest extends FormRequest
+final class IndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ final class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|max:255',
+
         ];
     }
 }

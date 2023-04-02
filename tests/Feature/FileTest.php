@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\File;
-use App\Models\User;
 use App\Services\TokenService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +20,7 @@ class FileTest extends Base
         )->post(
             route('file.upload'),
             [
-                'file' => UploadedFile::fake()->image('test.png')
+                'file' => UploadedFile::fake()->image('test.png'),
             ]
         )
             ->assertStatus(200);
@@ -36,7 +35,7 @@ class FileTest extends Base
         )->post(
             route('file.upload'),
             [
-                'file' => UploadedFile::fake()->image('test.png')
+                'file' => UploadedFile::fake()->image('test.png'),
             ]
         );
         $response->assertStatus(401);
@@ -52,7 +51,7 @@ class FileTest extends Base
                 'uuid' => $uuid,
                 'name' => $image->getFilename(),
                 'path' => $a,
-                'type' => $image->getMimeType()
+                'type' => $image->getMimeType(),
             ]
         );
         $this->assertTrue(Storage::disk('local')->exists('pet-shop/test.jpg'));

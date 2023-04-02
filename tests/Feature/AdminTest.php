@@ -15,7 +15,7 @@ class AdminTest extends Base
             'password' => \Hash::make('password'),
             'email' => fake()->safeEmail(),
             'address' => fake()->address(),
-            'phone_number' => fake()->phoneNumber()
+            'phone_number' => fake()->phoneNumber(),
         ]);
 
         $response->assertJson(['data' => ['token' => true]]);
@@ -29,7 +29,7 @@ class AdminTest extends Base
 
         $response = $this->post(route('admin.login'), [
             'email' => $user->email,
-            'password' => 'password'
+            'password' => 'password',
         ]);
         $response->assertJson(['data' => ['token' => true]]);
 
@@ -41,7 +41,7 @@ class AdminTest extends Base
         $user = $this->getRegularUser();
         $response = $this->post(route('admin.login'), [
             'email' => $user->email,
-            'password' => 'password'
+            'password' => 'password',
         ]);
 
         $response->assertStatus(401);
@@ -49,8 +49,9 @@ class AdminTest extends Base
 
     public function test_user_listing_with_admin_user()
     {
+
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            app(TokenService::class)->login($this->getAdminUser())
         )->get(route('admin.user.index'))->assertStatus(200);
     }
 
@@ -59,7 +60,6 @@ class AdminTest extends Base
         $this->httpRequestWithToken(
             app(TokenService::class)->login($this->getRegularUser(), true)
         )->get(route('admin.user.index'))->assertStatus(401);
-
     }
 
     public function test_user_to_update_with_admin()
@@ -69,14 +69,14 @@ class AdminTest extends Base
             app(TokenService::class)->login($this->getAdminUser(), true)
         )->put(
             route('admin.user.update', [
-                'user' => $user->uuid
+                'user' => $user->uuid,
             ]),
             [
                 'first_name' => 'name',
                 'last_name' => 'last',
                 'password' => '123123123123',
                 'address' => '123123123123',
-                'phone_number' => '123123'
+                'phone_number' => '123123',
             ]
         );
         $response = json_decode($response->getContent(), true);

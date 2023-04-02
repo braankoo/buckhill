@@ -11,40 +11,67 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 final class Jwt
 {
+    private $userLevel;
 
-
-    public function handle(Request $request, Closure $next, string $userLevel = 'user'): Response
-    {
+    public function handle(
+        Request $request,
+        Closure $next,
+        string $userLevel = 'user'
+    ): Response {
+        $this->userLevel = $userLevel;
         $token = $request->bearerToken();
-
         if (!$token) {
-            return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
+            return $this->unauthorizedResponse();
         }
 
+        $token = $this->parseToken($token);
 
-        try {
-            $token = \App\Facades\Jwt::parseToken($token);
-            $tokenId = $token->claims()->get('jti');
-            $userUuid = $token->claims()->get('user_uuid');
-            $userLevelToken = $token->claims()->get('user_level');
-
-            if (
-                $token->claims()->get('exp') < new \DateTimeImmutable()
-                || $userLevelToken !== $userLevel
-
-            ) {
-                return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
-            }
-
-            if (!$user = User::where('uuid', '=', $userUuid)->hasToken($tokenId)->first()) {
-                return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
-            }
-
-            Auth::setUser($user);
-        } catch (\Exception $e) {
-            return \Illuminate\Http\Response::api(HttpResponse::HTTP_UNAUTHORIZED, 1, [], 'Unauthorized');
+        if ($this->isTokenExpired($token) || !$this->isUserLevelValid($token)) {
+            return $this->unauthorizedResponse();
         }
+
+        $userUuid = $token->claims()->get('user_uuid');
+        $tokenId = $token->claims()->get('jti');
+        $user = $this->getUserByUuidAndTokenId($userUuid, $tokenId);
+
+        if (!$user) {
+            return $this->unauthorizedResponse();
+        }
+
+        Auth::setUser($user);
 
         return $next($request);
+    }
+
+    private function isTokenExpired($token): bool
+    {
+        return $token->claims()->get('exp') < new \DateTimeImmutable();
+    }
+
+    private function isUserLevelValid($token): bool
+    {
+        return $token->claims()->get('user_level') === $this->userLevel;
+    }
+
+    private function parseToken($token)
+    {
+        try {
+            return \App\Facades\Jwt::parseToken($token);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    private function getUserByUuidAndTokenId($userUuid, $tokenId)
+    {
+        return User::where('uuid', '=', $userUuid)->hasToken($tokenId)->first();
+    }
+
+    private function unauthorizedResponse($message = 'Unauthorized')
+    {
+        return response()->json([
+            'status' => 'error',
+            'message' => $message,
+        ], HttpResponse::HTTP_UNAUTHORIZED);
     }
 }

@@ -5,13 +5,10 @@ namespace Tests\Feature;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MainPageTest extends TestCase
 {
-
     use DatabaseTransactions;
     use DatabaseMigrations;
 
@@ -29,7 +26,6 @@ class MainPageTest extends TestCase
     {
         $response = $this->get(route('main.blog.index'));
 
-
         $response->assertStatus(200);
     }
 
@@ -37,7 +33,6 @@ class MainPageTest extends TestCase
     {
         $post = Post::factory()->create();
         $response = $this->get(route('main.blog.single', ['post' => $post->uuid]));
-
 
         $response->assertStatus(200);
     }

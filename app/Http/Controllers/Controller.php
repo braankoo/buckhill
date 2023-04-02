@@ -13,6 +13,7 @@ use OpenApi\Annotations as OA;
  *      title="Test Api",
  *      description="Hello from testing API"
  * )
+ *
  * @OA\SecurityScheme(
  *     type="http",
  *     scheme="bearer",
@@ -24,6 +25,5 @@ use OpenApi\Annotations as OA;
  */
 class Controller extends BaseController
 {
-
     use AuthorizesRequests, ValidatesRequests;
 }

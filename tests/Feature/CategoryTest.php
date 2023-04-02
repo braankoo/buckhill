@@ -3,14 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-
-use App\Models\User;
 use App\Services\TokenService;
-
 
 class CategoryTest extends Base
 {
-
     public function test_index(): void
     {
         $response = $this->get(route('category.index'));
@@ -34,7 +30,7 @@ class CategoryTest extends Base
             route(
                 'category.update',
                 [
-                    'category' => $category->uuid
+                    'category' => $category->uuid,
                 ]
             ),
             ['category' => $category->uuid]
@@ -50,11 +46,11 @@ class CategoryTest extends Base
             route(
                 'category.update',
                 [
-                    'category' => $category->uuid
+                    'category' => $category->uuid,
                 ]
             ),
             [
-                'title' => '123123123'
+                'title' => '123123123',
             ]
         )->assertStatus(200);
         self::assertEquals(Category::find($category)->first()->title, '123123123');

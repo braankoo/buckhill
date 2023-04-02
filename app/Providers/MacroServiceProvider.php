@@ -6,14 +6,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
 
-class MacroServiceProvider extends ServiceProvider
+final class MacroServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
      */
     public function register(): void
     {
-        //
     }
 
     /**
@@ -33,11 +32,8 @@ class MacroServiceProvider extends ServiceProvider
             ) {
                 return response()->json(
                     [
-                        'success' => $success,
-                        'data' => $data,
-                        'error' => $error,
-                        'errors' => $errors,
-                        'trace' => $trace,
+                        'success' => $success, 'data' => $data, 'error' => $error,
+                        'errors' => $errors, 'trace' => $trace,
                     ],
                     $responseCode
                 );

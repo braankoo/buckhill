@@ -18,10 +18,11 @@ class PaymentFactory extends Factory
     public function definition(): array
     {
         $type = ['credit_card', 'cash_on_delivery', 'bank_transfer'][rand(0, 2)];
+
         return [
             'uuid' => Str::uuid(),
             'type' => $type,
-            'details' => json_encode($this->getDetails($type))
+            'details' => json_encode($this->getDetails($type)),
         ];
     }
 
@@ -33,19 +34,19 @@ class PaymentFactory extends Factory
                     'holder_name' => fake()->name(),
                     'number' => fake()->creditCardNumber(),
                     'ccv' => fake()->randomNumber(3),
-                    'expire_date' => fake()->creditCardExpirationDate()
+                    'expire_date' => fake()->creditCardExpirationDate(),
                 ];
             case 'cash_on_delivery':
                 return [
                     'first_name' => fake()->name(),
                     'last_name' => fake()->lastName(),
-                    'address' => fake()->address()
+                    'address' => fake()->address(),
                 ];
             case 'bank_transfer':
                 return [
                     'swift' => fake()->swiftBicNumber(),
                     'iban' => fake()->iban(),
-                    'name' => fake()->name()
+                    'name' => fake()->name(),
                 ];
         }
     }

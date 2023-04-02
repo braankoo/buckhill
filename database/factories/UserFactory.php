@@ -26,7 +26,7 @@ class UserFactory extends Factory
             'avatar' => null,
             'address' => fake()->address(),
             'phone_number' => fake()->phoneNumber(),
-            'is_marketing' => 1
+            'is_marketing' => 1,
         ];
     }
 
@@ -35,7 +35,7 @@ class UserFactory extends Factory
      */
     public function isAdmin(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'is_admin' => true,
         ]);
     }

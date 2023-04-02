@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderStatus\CreateRequest;
-use App\Http\Requests\OrderStatus\StoreRequest;
 use App\Http\Requests\OrderStatus\UpdateRequest;
 use App\Models\OrderStatus;
 use App\Services\Paginator;
@@ -13,10 +12,10 @@ use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class OrderStatusController extends Controller
+final class OrderStatusController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('jwt')->except('show', 'index');
@@ -134,9 +133,9 @@ class OrderStatusController extends Controller
     public function store(CreateRequest $request): JsonResponse
     {
         $orderStatus = OrderStatus::create($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, $orderStatus);
     }
-
 
     /**
      * @OA\Get(
@@ -225,12 +224,10 @@ class OrderStatusController extends Controller
      * )
      * )
      */
-    public
-    function update(
-        UpdateRequest $request,
-        OrderStatus $orderStatus
-    ): JsonResponse {
+    public function update(UpdateRequest $request, OrderStatus $orderStatus): JsonResponse
+    {
         $orderStatus->update($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, $orderStatus);
     }
 
@@ -271,6 +268,7 @@ class OrderStatusController extends Controller
     public function destroy(OrderStatus $orderStatus): JsonResponse
     {
         $orderStatus->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }

@@ -22,7 +22,7 @@ class CategoryFactory extends Factory
         return [
             'uuid' => Str::uuid(),
             'title' => $title,
-            'slug' => Str::slug($title)
+            'slug' => Str::slug($title),
         ];
     }
 }

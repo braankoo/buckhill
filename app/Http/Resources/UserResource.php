@@ -2,11 +2,18 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 final class UserResource extends JsonResource
 {
+
+    public function __construct(User $resource)
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request): array
     {
         if (count($this->additional)) {
@@ -19,18 +26,18 @@ final class UserResource extends JsonResource
     private function default(): array
     {
         return [
-            'uuid' => $this->uuid,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'email_verified_at' => $this->email_verified_at,
-            'avatar' => $this->avatar,
-            'is_marketing' => $this->is_marketing,
-            'address' => $this->address,
-            'phone_number' => $this->phone_number,
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
-            'last_login' => $this->last_login,
+            'uuid' => $this->resource->uuid,
+            'first_name' => $this->resource->first_name,
+            'last_name' => $this->resource->last_name,
+            'email' => $this->resource->email,
+            'email_verified_at' => $this->resource->email_verified_at,
+            'avatar' => $this->resource->avatar,
+            'is_marketing' => $this->resource->is_marketing,
+            'address' => $this->resource->address,
+            'phone_number' => $this->resource->phone_number,
+            'updated_at' => $this->resource->updated_at,
+            'created_at' => $this->resource->created_at,
+            'last_login' => $this->resource->last_login,
         ];
     }
 }

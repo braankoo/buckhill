@@ -5,9 +5,8 @@ namespace App\Http\Requests\Payment;
 use App\Rules\PaymentDetailsRule;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
 
-class CreateRequest extends FormRequest
+final class CreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,6 +29,4 @@ class CreateRequest extends FormRequest
             'details' => ['required', new PaymentDetailsRule($this->input('type') ?? null)],
         ];
     }
-
-
 }

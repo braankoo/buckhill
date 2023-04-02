@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::prefix('v1')->group(function () {
-    $routeFiles = File::files(__DIR__.'/api');
+    $routeFiles = File::files(__DIR__ . '/api');
     foreach ($routeFiles as $routeFile) {
         require $routeFile->getPathname();
     }

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\TokenService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Lcobucci\JWT\Token;
@@ -24,13 +23,11 @@ class Base extends TestCase
         return User::factory()->create(['is_admin' => 0]);
     }
 
-    protected function httpRequestWithToken(Token $token): Base
+    protected function httpRequestWithToken(Token $token): self
     {
         return $this->withHeaders([
             'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ]);
     }
-
-
 }

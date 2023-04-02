@@ -5,7 +5,7 @@ namespace App\Http\Requests\Product;
 use App\Rules\Product\MetaDataRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRequest extends FormRequest
+final class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
             'title' => 'required|string|unique:products,title',
             'price' => 'required|numeric',
             'description' => 'required',
-            'metadata' => ['required', new MetaDataRule()]
+            'metadata' => ['required', new MetaDataRule()],
         ];
     }
 }

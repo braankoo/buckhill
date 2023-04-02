@@ -10,12 +10,12 @@ use App\Services\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class PaymentController extends Controller
+final class PaymentController extends Controller
 {
     /**
      * @OA\Get(
@@ -82,6 +82,7 @@ class PaymentController extends Controller
     public function index(Request $request, Paginator $paginator): Collection
     {
         $data = $paginator->paginateRequest($request, Payment::query());
+
         return $data->getCollection()->transform(function ($value) {
             return new PaymentResource($value);
         });
@@ -136,19 +137,18 @@ class PaymentController extends Controller
      *
      * @throws Throwable
      */
-
     public function store(CreateRequest $request): JsonResponse
     {
         $attributes = $request->safe()->all();
         $payment = Payment::create(
             [
                 'type' => $attributes['type'],
-                'details' => $attributes['details']
+                'details' => $attributes['details'],
             ]
         );
+
         return Response::api(HttpResponse::HTTP_OK, 1, new PaymentResource($payment));
     }
-
 
     /**
      * @OA\Get(
@@ -238,16 +238,14 @@ class PaymentController extends Controller
      *
      * @throws Throwable
      */
-    public
-    function update(
-        UpdateRequest $request,
-        Payment $payment
-    ): JsonResponse {
+    public function update(UpdateRequest $request, Payment $payment): JsonResponse
+    {
         $attributes = $request->safe()->all();
         $payment->update([
             'type' => $attributes['type'],
-            'details' => $attributes['details']
+            'details' => $attributes['details'],
         ]);
+
         return Response::api(HttpResponse::HTTP_OK, 1, new PaymentResource($payment));
     }
 
@@ -288,6 +286,7 @@ class PaymentController extends Controller
     public function destroy(Payment $payment): JsonResponse
     {
         $payment->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }

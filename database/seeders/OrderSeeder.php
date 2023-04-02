@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
-use Database\Factories\OrderFactory;
 use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
@@ -25,7 +24,7 @@ class OrderSeeder extends Seeder
                             Product::take(rand(1, 20))->get()->map(function ($product) {
                                 return ['product' => $product->uuid, 'quantity' => rand(1, 10)];
                             })->toArray()
-                        )
+                        ),
                     ]
                 );
         });

@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
-class PaymentDetailsRule implements Rule
+final class PaymentDetailsRule implements Rule
 {
     private string|null $type;
 
@@ -14,7 +14,13 @@ class PaymentDetailsRule implements Rule
         $this->type = $type;
     }
 
-    public function passes($attribute, $value): bool
+    /**
+     * @param $attribute
+     * @param string $value
+     *
+     * @return bool
+     */
+    public function passes($attribute, mixed $value): bool
     {
         if (is_null($this->type)) {
             return false;

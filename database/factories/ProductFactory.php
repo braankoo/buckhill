@@ -34,6 +34,7 @@ class ProductFactory extends Factory
             $category = Category::factory()->create();
             $brand = Brand::factory()->create();
             $file = File::factory()->create();
+
             return array_merge(
                 $attr,
                 [
@@ -41,9 +42,9 @@ class ProductFactory extends Factory
                     'metadata' => json_encode(
                         [
                             'brand' => $brand->uuid,
-                            'image' => $file->uuid
+                            'image' => $file->uuid,
                         ]
-                    )
+                    ),
                 ]
             );
         });

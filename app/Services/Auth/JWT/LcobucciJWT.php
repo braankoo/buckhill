@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth\JWT;
 
+use App\Models\User;
 use DateTimeImmutable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Lcobucci\JWT\Configuration;
@@ -14,9 +15,6 @@ use Lcobucci\JWT\Token\Builder;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\UnencryptedToken;
 
-/**
- *
- */
 final class LcobucciJWT implements JWT
 {
     public function provideToken(Authenticatable $user): UnencryptedToken
@@ -31,6 +29,7 @@ final class LcobucciJWT implements JWT
     public function parseToken(string $token): Token
     {
         $parser = new Parser(new JoseEncoder());
+
         return $parser->parse($token);
     }
 
@@ -45,7 +44,7 @@ final class LcobucciJWT implements JWT
 
     private function generateToken(
         Builder $tokenBuilder,
-        Authenticatable $user,
+        User $user,
         Configuration $configuration,
         DateTimeImmutable $now
     ): UnencryptedToken {

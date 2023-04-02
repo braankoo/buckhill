@@ -8,7 +8,6 @@ use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Resources\AdminResource;
 use App\Models\User;
 use App\Services\TokenService;
-use App\Services\UserAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,12 +16,8 @@ use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
-use function GuzzleHttp\Promise\all;
-
 final class AuthController extends Controller
 {
-
-
     private TokenService $tokenService;
 
     public function __construct(TokenService $tokenService)
@@ -115,6 +110,7 @@ final class AuthController extends Controller
         if (!$user) {
             return Response::api(HttpResponse::HTTP_INTERNAL_SERVER_ERROR, 0, [], 'Error happend');
         }
+
         return Response::api(HttpResponse::HTTP_OK, 1, $user);
     }
 
@@ -165,7 +161,7 @@ final class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        if (!Auth::attempt($request->safe()->only('email', 'password')) || !Auth::user()->is_admin) {
+        if (!Auth::attempt($request->safe()->only('email', 'password')) || !Auth::user() || !Auth::user()->is_admin) {
             return Response::api(HttpResponse::HTTP_UNAUTHORIZED, 0, [], 'Failed to authenticate user');
         }
         $token = $this->tokenService->login(Auth::user());
@@ -173,6 +169,7 @@ final class AuthController extends Controller
         if (!$token) {
             return Response::api(HttpResponse::HTTP_UNAUTHORIZED, 0, [], 'Failed to authenticate user');
         }
+
         return Response::api(HttpResponse::HTTP_OK, 1, ['token' => $token->toString()]);
     }
 
@@ -204,7 +201,7 @@ final class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        list($userUuid, $tokenId) = $this->tokenService->logout($request);
+        [$userUuid, $tokenId] = $this->tokenService->logout($request);
 
         User::where('uuid', '=', $userUuid)->first()->tokens()->where('unique_id', '=', $tokenId)->delete();
 

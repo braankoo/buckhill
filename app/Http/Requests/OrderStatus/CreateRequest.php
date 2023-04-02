@@ -4,7 +4,7 @@ namespace App\Http\Requests\OrderStatus;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateRequest extends FormRequest
+final class CreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class CreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255'
+            'title' => 'required|string|max:255',
         ];
     }
 }

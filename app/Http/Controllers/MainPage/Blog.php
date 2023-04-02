@@ -12,7 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class Blog extends Controller
+final class Blog extends Controller
 {
     /**
      * @OA\Get(
@@ -80,14 +80,14 @@ class Blog extends Controller
         $data = $paginator->paginateRequest($request, \App\Models\Post::query());
         $data->getCollection()->transform(function ($value) {
             $value->metadata = json_decode($value->metadata, true);
+
             return $value;
         });
+
         return $data;
     }
 
     /**
-     *
-     *
      * @OA\Get(
      *     path="/api/v1/main/blog/{uuid}",
      *     tags={"MainPage"},

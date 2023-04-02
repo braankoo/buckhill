@@ -3,10 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Brand;
-use App\Models\User;
 use App\Services\TokenService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class BrandTest extends Base
 {
@@ -22,7 +19,7 @@ class BrandTest extends Base
         $this->httpRequestWithToken(
             app(TokenService::class)->login($this->getAdminUser(), true)
         )->post(route('brand.store'), [
-            'title' => fake()->word()
+            'title' => fake()->word(),
         ])->assertStatus(401);
     }
 
@@ -44,7 +41,7 @@ class BrandTest extends Base
         )->post(
             route('brand.store'),
             [
-                'title' => fake()->word()
+                'title' => fake()->word(),
             ]
         )->assertJson(['data' => ['uuid' => true]])
             ->assertStatus(200);
@@ -68,7 +65,7 @@ class BrandTest extends Base
         )->put(
             route('brand.update', $brand->uuid),
             [
-                'title' => fake()->word()
+                'title' => fake()->word(),
             ]
         )->assertStatus(200);
     }

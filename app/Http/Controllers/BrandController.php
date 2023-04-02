@@ -10,10 +10,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use OpenApi\Annotations as OA;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
-class BrandController extends Controller
+final class BrandController extends Controller
 {
     /**
      * @OA\Get(
@@ -124,9 +125,10 @@ class BrandController extends Controller
      *
      * @throws Throwable
      */
-    public function store(CreateRequest $request)
+    public function store(CreateRequest $request):JsonResponse
     {
         $brand = Brand::create($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, '1', $brand);
     }
 
@@ -220,6 +222,7 @@ class BrandController extends Controller
     public function update(UpdateRequest $request, Brand $brand): JsonResponse
     {
         $brand->update($request->safe()->all());
+
         return Response::api(HttpResponse::HTTP_OK, 1, $brand);
     }
 
@@ -260,6 +263,7 @@ class BrandController extends Controller
     public function destroy(Brand $brand): JsonResponse
     {
         $brand->delete();
+
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 }
