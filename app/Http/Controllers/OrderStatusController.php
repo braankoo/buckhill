@@ -7,7 +7,6 @@ use App\Http\Requests\OrderStatus\StoreRequest;
 use App\Http\Requests\OrderStatus\UpdateRequest;
 use App\Models\OrderStatus;
 use App\Services\Paginator;
-use GuzzleHttp\Promise\Create;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,6 +16,12 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class OrderStatusController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('jwt')->except('show', 'index');
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/order-status",
