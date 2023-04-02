@@ -17,7 +17,7 @@ class MetaDataRule implements ValidationRule
     {
         $values = json_decode($value, true);
 
-        if (is_null($values)) {
+        if (!is_array($values)) {
             $fail('Metadata must be valid JSON');
             return;
         }

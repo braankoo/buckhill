@@ -16,6 +16,11 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt');
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/product",
