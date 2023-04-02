@@ -19,6 +19,7 @@ class PostFactory extends Factory
     public function definition(): array
     {
         $title = fake()->words(4, true);
+        $file = File::factory()->create();
         return [
             'uuid' => Str::uuid(),
             'title' => $title,
@@ -27,7 +28,7 @@ class PostFactory extends Factory
             'metadata' => json_encode(
                 [
                     'author' => fake()->name(),
-                    'image' => File::inRandomOrder()->first()->uuid
+                    'image' => $file->uuid
                 ]
             )
 
