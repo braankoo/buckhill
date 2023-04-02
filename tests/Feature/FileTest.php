@@ -5,19 +5,12 @@ namespace Tests\Feature;
 use App\Models\File;
 use App\Models\User;
 use App\Services\TokenService;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 
-class FileTest extends TestCase
+class FileTest extends Base
 {
-
-    use DatabaseTransactions;
-    use DatabaseMigrations;
-
     /**
      * A basic feature test example.
      */
