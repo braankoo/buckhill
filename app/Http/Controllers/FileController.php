@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\File\StoreRequest;
 use App\Models\File;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('jwt')->only('store');
+    }
+
     /**
      * @OA\Post(
      *     path="/api/v1/file/upload",
