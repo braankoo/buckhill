@@ -16,32 +16,24 @@ class FileTest extends Base
      */
     public function test_upload_regular_user(): void
     {
-        $user = User::factory()->create(['is_admin' => 0]);
-        $token = app(TokenService::class)->login($user);
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->post(
+        $response = $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getRegularUser(), true)
+        )->post(
             route('file.upload'),
             [
                 'file' => UploadedFile::fake()->image('test.png')
             ]
-        );
-        $response->assertStatus(200);
+        )
+            ->assertStatus(200);
         $response = json_decode($response->getContent(), true);
         \Storage::assertExists($response['data']['path']);
     }
 
     public function test_upload_admin_user(): void
     {
-        $user = User::factory()->create(['is_admin' => 1]);
-        $token = app(TokenService::class)->login($user);
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token->toString(),
-            'Accept' => 'application/json'
-        ])->post(
+        $response = $this->httpRequestWithToken(
+            app(TokenService::class)->login($this->getAdminUser(), true)
+        )->post(
             route('file.upload'),
             [
                 'file' => UploadedFile::fake()->image('test.png')
