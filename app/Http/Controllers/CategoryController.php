@@ -15,6 +15,12 @@ use OpenApi\Annotations as OA;
 
 class CategoryController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('jwt')->only(['create', 'store', 'update']);
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/category",
@@ -130,9 +136,7 @@ class CategoryController extends Controller
         return Response::api(HttpResponse::HTTP_OK, 1, $category);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     /**
      * @OA\Get(
      *     path="/api/v1/category/{uuid}",
