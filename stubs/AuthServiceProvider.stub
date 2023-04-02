@@ -1,0 +1,16 @@
+<?php
+
+namespace Illuminate\Foundation\Support\Providers;
+
+/**
+ * @see AuthServiceProvider
+ */
+class AuthServiceProvider extends \Illuminate\Auth\AuthServiceProvider
+{
+    /**
+     * The application's policy mappings.
+     *
+     * @var array<class-string, class-string>
+     */
+    protected $policies = [];
+}
