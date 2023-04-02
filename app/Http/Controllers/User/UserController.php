@@ -14,6 +14,12 @@ use OpenApi\Annotations as OA;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('jwt');
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/user",

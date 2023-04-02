@@ -10,6 +10,11 @@ use OpenApi\Annotations as OA;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt');
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/users/orders",
