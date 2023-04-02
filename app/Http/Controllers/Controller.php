@@ -13,12 +13,6 @@ use OpenApi\Annotations as OA;
  *      title="Test Api",
  *      description="Hello from testing API"
  * )
- *
- * @OA\Server(
- *      url="http://localhost",
- *      description="Localhost"
- * )
- *
  * @OA\SecurityScheme(
  *     type="http",
  *     scheme="bearer",
