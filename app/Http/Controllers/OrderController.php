@@ -10,11 +10,9 @@ use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Models\User;
 use App\Services\Paginator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Dompdf\Dompdf;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,6 +24,11 @@ use OpenApi\Annotations as OA;
 
 class OrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt');
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/order",
@@ -388,7 +391,7 @@ class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/order/{uuid}/download",
+     *     path="/api/v1/orders/{uuid}/download",
      *     tags={"Orders"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
@@ -422,13 +425,13 @@ class OrderController extends Controller
      */
     public function download(Order $order): Response
     {
-        $products = json_decode($order->products);
+        $products = json_decode($order->products, true);
 
         $productsAndQuantity = array_map(function ($product) {
             return
                 [
-                    'product' => Product::firstWhere('uuid', '=', $product->product),
-                    'quantity' => $product->quantity
+                    'product' => Product::firstWhere('uuid', '=', $product['product']),
+                    'quantity' => $product['quantity']
                 ];
         }, $products);
 
