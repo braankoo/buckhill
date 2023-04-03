@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Services\Auth\JWT\JWT;
 use App\Services\Auth\JWT\LcobucciJWT;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -22,8 +22,8 @@ final class AppServiceProvider extends ServiceProvider
             return new LcobucciJWT();
         });
 
-        $this->app->bind(TokenService::class, function () {
-            return new TokenService();
+        $this->app->bind(UserAuthService::class, function () {
+            return new UserAuthService();
         });
     }
 }
