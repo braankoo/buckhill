@@ -37,7 +37,7 @@ final class UpdateRequest extends FormRequest
     public function safe(?array $keys = null): \Illuminate\Support\ValidatedInput|array
     {
         $data = parent::safe($keys);
-        if (is_null('is_marketing')) {
+        if (is_null($this->input('is_marketing'))) {
             $data['is_marketing'] = 0;
         }
 
