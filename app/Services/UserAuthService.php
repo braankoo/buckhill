@@ -83,11 +83,6 @@ final class UserAuthService
         }
     }
 
-    /**
-     * @param string $token
-     * @return bool
-     * @throws \Exception|\Throwable
-     */
     public function logout(string $token): bool
     {
         $token = Jwt::parseToken($token);

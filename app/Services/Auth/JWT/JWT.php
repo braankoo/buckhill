@@ -11,4 +11,6 @@ interface JWT
     public function provideToken(User $user): UnencryptedToken;
 
     public function parseToken(string $token): Token;
+
+    public function validateToken(UnencryptedToken $token):bool;
 }

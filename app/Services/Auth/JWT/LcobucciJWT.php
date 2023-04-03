@@ -14,20 +14,33 @@ use Lcobucci\JWT\Token\Builder;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Validator;
 
 final class LcobucciJWT implements JWT
 {
     public function provideToken(User $user): UnencryptedToken
     {
-        $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
+        $tokenBuilder = (new Builder(
+            new JoseEncoder(),
+            ChainedFormatter::default()
+        ));
 
         $configuration = $this->getConfiguration();
 
-        return $this->generateToken($tokenBuilder, $user, $configuration, new DateTimeImmutable());
+        return $this->generateToken(
+            $tokenBuilder,
+            $user,
+            $configuration,
+            new DateTimeImmutable()
+        );
     }
+
     public function parseToken(string $token): Token
     {
-        if (empty($token)) {
+        if ($token === '') {
             throw new InvalidTokenStructure('Token cannot be empty');
         }
         $parser = new Parser(new JoseEncoder());
@@ -38,7 +51,7 @@ final class LcobucciJWT implements JWT
     private function getConfiguration(): Configuration
     {
         $keyPath = base_path('/token-key.pem');
-        if (empty($keyPath)) {
+        if ($keyPath === '') {
             throw new \InvalidArgumentException('Key file path is empty');
         }
         if (!file_exists($keyPath)) {
@@ -62,9 +75,21 @@ final class LcobucciJWT implements JWT
             ->permittedFor(config('app.url'))
             ->identifiedBy((string)$user->id)
             ->issuedAt($now)
-            ->expiresAt($now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds'))
+            ->expiresAt(
+                $now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds')
+            )
             ->withClaim('user_uuid', $user->uuid)
-            ->withClaim('access_level', $user->is_admin ? 'admin' : 'user' )
+            ->withClaim('access_level', $user->is_admin ? 'admin' : 'user')
             ->getToken($configuration->signer(), $configuration->signingKey());
+    }
+
+    public function validateToken(UnencryptedToken $token):bool
+    {
+        $validator = new Validator();
+        $constraints = [
+            new IssuedBy(config('app.url')),
+            new PermittedFor(config('app.url')),
+        ];
+        return $validator->validate($token, ...$constraints);
     }
 }
