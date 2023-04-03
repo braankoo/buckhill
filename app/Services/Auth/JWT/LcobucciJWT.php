@@ -4,7 +4,6 @@ namespace App\Services\Auth\JWT;
 
 use App\Models\User;
 use DateTimeImmutable;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
@@ -26,7 +25,6 @@ final class LcobucciJWT implements JWT
 
         return $this->generateToken($tokenBuilder, $user, $configuration, new DateTimeImmutable());
     }
-
     public function parseToken(string $token): Token
     {
         if (empty($token)) {
@@ -66,7 +64,7 @@ final class LcobucciJWT implements JWT
             ->issuedAt($now)
             ->expiresAt($now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds'))
             ->withClaim('user_uuid', $user->uuid)
-            ->withClaim('user_level', $user->is_admin ? 'admin' : 'user')
+            ->withClaim('access_level', $user->is_admin ? 'admin' : 'user' )
             ->getToken($configuration->signer(), $configuration->signingKey());
     }
 }
