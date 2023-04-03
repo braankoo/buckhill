@@ -18,7 +18,8 @@ final class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt:admin');
+        $this->middleware(['jwt','jwt.auth','role:admin']);
+
     }
     /**
      * @OA\Get(

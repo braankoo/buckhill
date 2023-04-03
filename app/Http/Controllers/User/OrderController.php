@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -12,7 +13,7 @@ final class OrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt');
+        $this->middleware(['jwt','jwt.auth','role:user']);
     }
 
     /**
@@ -79,7 +80,8 @@ final class OrderController extends Controller
      */
     public function index(Request $request, Paginator $paginator): LengthAwarePaginator
     {
-        $query = $request->user()->orders();
+        $user = User::whereId(\Auth::id())->firstOrFail();
+        $query = $user->orders();
         $data = $paginator->paginateRequest($request, $query);
         $data->getCollection()->transform(function ($value) {
             $value->products = json_decode($value->products, true);

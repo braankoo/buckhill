@@ -16,6 +16,12 @@ use Throwable;
 
 final class BrandController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['jwt', 'jwt.auth', 'role:user'])->except(['index', 'show']);
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/brand",

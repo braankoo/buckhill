@@ -15,7 +15,7 @@ final class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt');
+        $this->middleware(['jwt','jwt.auth','role:user']);
     }
 
     /**
@@ -47,9 +47,10 @@ final class UserController extends Controller
      */
     public function show(): JsonResponse
     {
-        $user = User::find(\Auth::id());
+        $user = User::whereId(\Auth::id())->firstOrFail();
 
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]
+        );
     }
 
     /**
@@ -132,9 +133,10 @@ final class UserController extends Controller
      */
     public function edit(UpdateRequest $request): JsonResponse
     {
-        \Auth::user()->update($request->safe()->all());
-        $user = User::find(\Auth::id());
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
+        $user = User::whereId(\Auth::id())->firstOrFail();
+        $user->update($request->safe()->all());
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]
+        );
     }
 
     /**
@@ -166,7 +168,8 @@ final class UserController extends Controller
      */
     public function destroy(): JsonResponse
     {
-        \Auth::user()->delete();
+        $user = User::whereId(\Auth::id())->firstOrFail();
+        $user->delete();
 
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }

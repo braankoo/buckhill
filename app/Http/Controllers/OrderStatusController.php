@@ -18,7 +18,7 @@ final class OrderStatusController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt')->except('show', 'index');
+        $this->middleware(['jwt', 'jwt.auth', 'role:user'])->except(['index', 'show']);
     }
 
     /**

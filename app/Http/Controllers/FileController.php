@@ -8,14 +8,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use OpenApi\Annotations as OA;
+use Psy\Readline\Hoa\FileException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class FileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt')->only('store');
+        $this->middleware(['jwt', 'jwt.auth', 'role:user'])->only(['store']);
     }
 
     /**
@@ -62,7 +64,15 @@ final class FileController extends Controller
     public function store(StoreRequest $request):JsonResponse
     {
 
-        $file = $this->getUploadedFile($request->file('file'));
+        try {
+
+            $file = $this->getUploadedFile($request->file('file'));
+
+        }catch (\InvalidArgumentException $e){
+
+            return Response::api(Response::HTTP_UNPROCESSABLE_ENTITY, 1, 'Wrong type');
+        }
+
         $uuid = Str::uuid();
         $path = $file->storeAs('pet-shop', $uuid . '.' . $file->getClientOriginalExtension());
         $file = File::create(
@@ -120,14 +130,10 @@ final class FileController extends Controller
         return response()->download(storage_path('app/' . $file->path), $file->name, $headers);
     }
 
-    /**
-     * @param array|UploadedFile|UploadedFile[]|null $file
-     * @return UploadedFile|null
-     */
-    private function getUploadedFile(array|UploadedFile|null $file):?UploadedFile {
+    private function getUploadedFile(array|UploadedFile|null $file):UploadedFile {
 
         if (!$file instanceof UploadedFile) {
-            return null;
+            throw new InvalidArgumentException();
         }
         return $file;
 

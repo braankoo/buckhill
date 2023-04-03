@@ -12,7 +12,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Throwable;
 
 class BaseAuthController extends Controller
 {
@@ -49,12 +51,13 @@ class BaseAuthController extends Controller
         }
         $user = User::whereId(Auth::id())->firstOrFail();
 
-        if ($user->is_admin !== $this->isAdmin) {
+        if (!$this->checkAuthorization($user)) {
             return $this->unauthorized();
         }
+
         try {
             $token = $this->service->login($user);
-        } catch (Exception $e) {
+        } catch (\ErrorException|Throwable $e) {
             return Response::api(
                 HttpResponse::HTTP_INTERNAL_SERVER_ERROR,
                 1,
@@ -71,18 +74,16 @@ class BaseAuthController extends Controller
     /**
      * @throws Exception
      */
-    public function logout(Request $request): JsonResponse
-    {
-        if (!$token = $request->bearerToken()) {
-            return Response::api(
-                HttpResponse::HTTP_UNAUTHORIZED,
-                0,
-                [],
-                'Token Required'
-            );
+    public
+    function logout(
+        Request $request
+    ): JsonResponse {
+        $token = $request->bearerToken();
+        if (is_null($token)) {
+            $this->unauthorized();
         }
         try {
-            $this->service->logout($token);
+            $this->service->logout((string)$token);
         } catch (\ErrorException $e) {
             return Response::api(
                 HttpResponse::HTTP_INTERNAL_SERVER_ERROR,
@@ -90,15 +91,11 @@ class BaseAuthController extends Controller
                 ['error']
             );
         }
-
-
         return Response::api(HttpResponse::HTTP_OK, 1, []);
     }
 
-    /**
-     * @return mixed
-     */
-    public function unauthorized():JsonResponse
+    public
+    function unauthorized(): JsonResponse
     {
         return Response::api(
             HttpResponse::HTTP_UNAUTHORIZED,
@@ -106,5 +103,12 @@ class BaseAuthController extends Controller
             [],
             'Failed to authenticate user'
         );
+    }
+
+    private
+    function checkAuthorization(
+        User $user
+    ): bool {
+        return $user->is_admin == $this->isAdmin;
     }
 }

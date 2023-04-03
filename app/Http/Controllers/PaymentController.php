@@ -17,6 +17,11 @@ use Throwable;
 
 final class PaymentController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['jwt', 'jwt.auth', 'role:user']);
+    }
+
     /**
      * @OA\Get(
      *     path="/api/v1/payment",
@@ -147,7 +152,11 @@ final class PaymentController extends Controller
             ]
         );
 
-        return Response::api(HttpResponse::HTTP_OK, 1, new PaymentResource($payment));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new PaymentResource($payment)
+        );
     }
 
     /**
@@ -238,15 +247,21 @@ final class PaymentController extends Controller
      *
      * @throws Throwable
      */
-    public function update(UpdateRequest $request, Payment $payment): JsonResponse
-    {
+    public function update(
+        UpdateRequest $request,
+        Payment $payment
+    ): JsonResponse {
         $attributes = $request->safe()->all();
         $payment->update([
             'type' => $attributes['type'],
             'details' => $attributes['details'],
         ]);
 
-        return Response::api(HttpResponse::HTTP_OK, 1, new PaymentResource($payment));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new PaymentResource($payment)
+        );
     }
 
     /**

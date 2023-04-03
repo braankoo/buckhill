@@ -53,7 +53,7 @@ final class ForgotPasswordController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->firstOrFail();
         $token = Password::createToken($user);
 
         return Response::api(ResponseAlias::HTTP_OK, 1, ['token' => $token]);

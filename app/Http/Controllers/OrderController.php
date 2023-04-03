@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\User;
 use App\Services\Paginator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -27,7 +28,7 @@ final class OrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt');
+        $this->middleware(['jwt', 'jwt.auth', 'role:user']);
     }
 
     /**
@@ -190,18 +191,11 @@ final class OrderController extends Controller
     {
         $attributes = $request->safe()->all();
 
-        $status = OrderStatus::where(
-            'uuid',
-            '=',
-            $attributes['order_status_uuid']
-        )->first();
-        $payment = Payment::where(
-            'uuid',
-            '=',
-            $attributes['payment_uuid']
-        )->first();
+        $status = OrderStatus::whereUuid($attributes['order_status_uuid'])->firstOrFail();
+        $payment = Payment::whereUuid('uuid')->firstOrFail();
+        $user = User::whereId((int)\Auth::id())->firstOrFail();
 
-        $order = $request->user()->orders()->create(
+        $order = $user->orders()->create(
             [
                 'products' => json_encode($attributes['products']),
                 'address' => json_encode($attributes['address']),
@@ -354,16 +348,8 @@ final class OrderController extends Controller
     {
         $attributes = $request->safe()->all();
 
-        $status = OrderStatus::where(
-            'uuid',
-            '=',
-            $attributes['order_status_uuid']
-        )->first();
-        $payment = Payment::where(
-            'uuid',
-            '=',
-            $attributes['payment_uuid']
-        )->first();
+        $status = OrderStatus::whereUuid($attributes['order_status_uuid'])->firstOrFail();
+        $payment = Payment::whereUuid($attributes['payment_uuid'])->firstOrFail();
 
         $order->update(
             [
