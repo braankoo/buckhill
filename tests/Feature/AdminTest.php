@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class AdminTest extends Base
 {
@@ -50,23 +50,23 @@ class AdminTest extends Base
     public function test_user_listing_with_admin_user()
     {
 
-        $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser())
-        )->get(route('admin.user.index'))->assertStatus(200);
+        $this->httpRequestWithToken($this->getAdminUser())
+        ->get(route('admin.user.index'))->assertStatus(200);
     }
 
     public function test_user_listing_with_regular_user()
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->get(route('admin.user.index'))->assertStatus(401);
     }
 
     public function test_user_to_update_with_admin()
     {
-        $user = User::factory()->create();
+        $user = $this->getAdminUser();
+
         $response = $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $user
         )->put(
             route('admin.user.update', [
                 'user' => $user->uuid,
@@ -77,6 +77,7 @@ class AdminTest extends Base
                 'password' => '123123123123',
                 'address' => '123123123123',
                 'phone_number' => '123123',
+                'email' => 'test@asdsd.comc'
             ]
         );
         $response = json_decode($response->getContent(), true);

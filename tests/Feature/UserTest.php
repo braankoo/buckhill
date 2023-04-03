@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class UserTest extends Base
 {
@@ -18,14 +18,18 @@ class UserTest extends Base
 
     public function test_index_admin_user(): void
     {
-        $this->httpRequestWithToken(app(TokenService::class)->login($this->getAdminUser()))->get(
+        $this->httpRequestWithToken(
+            $this->getAdminUser()
+        )->get(
             route('user.index')
         )->assertStatus(401);
     }
 
     public function test_index_regular_user(): void
     {
-        $this->httpRequestWithToken(app(TokenService::class)->login($this->getRegularUser()))->get(
+        $this->httpRequestWithToken(
+            $this->getRegularUser()
+        )->get(
             route('user.index')
         )->assertStatus(200);
     }

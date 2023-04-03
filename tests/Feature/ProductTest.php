@@ -6,7 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class ProductTest extends Base
 {
@@ -21,7 +21,7 @@ class ProductTest extends Base
     {
         $product = Product::factory()->complete()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->get(route('product.show', ['product' => $product->uuid]))
             ->assertStatus(200);
     }
@@ -30,7 +30,7 @@ class ProductTest extends Base
     {
         $product = Product::factory()->complete()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->get(route('product.show', ['product' => $product->uuid]))
             ->assertStatus(401);
     }
@@ -43,7 +43,7 @@ class ProductTest extends Base
         $file = File::factory()->create();
 
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->put(
             route(
                 'product.update',
@@ -70,7 +70,7 @@ class ProductTest extends Base
         $product = Product::factory()->complete()->create();
 
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->delete(
             route(
                 'product.destroy',

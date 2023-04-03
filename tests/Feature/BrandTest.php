@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Brand;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class BrandTest extends Base
 {
@@ -17,7 +17,7 @@ class BrandTest extends Base
     public function test_post_admin_user()
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->post(route('brand.store'), [
             'title' => fake()->word(),
         ])->assertStatus(401);
@@ -28,7 +28,7 @@ class BrandTest extends Base
         $brand = Brand::factory()->create();
 
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->get(route('brand.show', ['brand' => $brand]))
             ->assertStatus(200)
             ->assertJson(['data' => ['uuid' => true]]);
@@ -37,7 +37,7 @@ class BrandTest extends Base
     public function test_post_regular_user()
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->post(
             route('brand.store'),
             [
@@ -52,7 +52,7 @@ class BrandTest extends Base
         $brand = Brand::factory()->create();
 
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->put(route('brand.update', $brand->uuid), [
         ])->assertStatus(401);
     }
@@ -61,7 +61,7 @@ class BrandTest extends Base
     {
         $brand = Brand::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->put(
             route('brand.update', $brand->uuid),
             [
@@ -74,7 +74,7 @@ class BrandTest extends Base
     {
         $brand = Brand::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->delete(
             route('brand.destroy', $brand->uuid)
         )->assertStatus(200);

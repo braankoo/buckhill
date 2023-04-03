@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class CategoryTest extends Base
 {
@@ -25,7 +25,7 @@ class CategoryTest extends Base
     {
         $category = Category::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->put(
             route(
                 'category.update',
@@ -41,7 +41,7 @@ class CategoryTest extends Base
     {
         $category = Category::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->put(
             route(
                 'category.update',

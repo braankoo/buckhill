@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\File;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class FileTest extends Base
     public function test_upload_regular_user(): void
     {
         $response = $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->post(
             route('file.upload'),
             [
@@ -31,7 +31,7 @@ class FileTest extends Base
     public function test_upload_admin_user(): void
     {
         $response = $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser(), true)
+            $this->getAdminUser()
         )->post(
             route('file.upload'),
             [

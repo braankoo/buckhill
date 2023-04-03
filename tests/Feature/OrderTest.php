@@ -6,7 +6,7 @@ use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class OrderTest extends Base
 {
@@ -22,7 +22,7 @@ class OrderTest extends Base
     public function test_index_admin_user(): void
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser())
+            $this->getAdminUser()
         )->get(route('order.index'))
             ->assertStatus(401);
     }
@@ -30,7 +30,7 @@ class OrderTest extends Base
     public function test_index_regular_user(): void
     {
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->get(route('order.index'))
             ->assertStatus(200);
     }
@@ -40,9 +40,8 @@ class OrderTest extends Base
         $user = $this->getRegularUser();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
 
-        $this->httpRequestWithToken(
-            app(TokenService::class)->login($user, true)
-        )->get(route('order.show', ['order' => $order->uuid]))
+        $this->httpRequestWithToken($user)
+            ->get(route('order.show', ['order' => $order->uuid]))
             ->assertStatus(200);
     }
 
@@ -51,7 +50,7 @@ class OrderTest extends Base
         $user = $this->getAdminUser();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($user, true)
+            $user
         )->put(
             route(
                 'order.update',
@@ -70,7 +69,9 @@ class OrderTest extends Base
         $oderStatus = OrderStatus::factory()->create();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
 
-        $response = $this->httpRequestWithToken(app(TokenService::class)->login($user, true))->put(
+        $response = $this->httpRequestWithToken(
+            $user
+        )->put(
             route(
                 'order.update',
                 [
@@ -99,7 +100,7 @@ class OrderTest extends Base
         $user = $this->getRegularUser();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
         $response = $this->httpRequestWithToken(
-            app(TokenService::class)->login($user, true)
+            $user
         )->delete(
             route(
                 'order.destroy',
@@ -117,7 +118,7 @@ class OrderTest extends Base
         $user = $this->getRegularUser();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
         $response = $this->httpRequestWithToken(
-            app(TokenService::class)->login($user, true)
+            $user
         )->get(
             route(
                 'orders.download',

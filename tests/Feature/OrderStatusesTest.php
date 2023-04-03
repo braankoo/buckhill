@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\OrderStatus;
-use App\Services\TokenService;
+use App\Services\UserAuthService;
 
 class OrderStatusesTest extends Base
 {
@@ -28,7 +28,7 @@ class OrderStatusesTest extends Base
     {
         $orderStatus = OrderStatus::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getAdminUser())
+            $this->getAdminUser()
         )->put(
             route('order-status.update', ['order_status' => $orderStatus->uuid]),
             ['title' => '123']
@@ -39,7 +39,7 @@ class OrderStatusesTest extends Base
     {
         $orderStatus = OrderStatus::factory()->create();
         $this->httpRequestWithToken(
-            app(TokenService::class)->login($this->getRegularUser(), true)
+            $this->getRegularUser()
         )->put(
             route('order-status.update', ['order_status' => $orderStatus->uuid]),
             [
