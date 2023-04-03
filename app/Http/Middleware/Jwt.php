@@ -13,24 +13,26 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 final class Jwt
 {
-    private string $userLevel;
+    private string $accessLevel;
 
     public function handle(
         Request $request,
         Closure $next,
-        string $userLevel = 'user'
+        string $accessLevel = 'user'
     ): Response {
-        $this->userLevel = $userLevel;
-        $token = $request->bearerToken();
-        if (!$token) {
+        $this->accessLevel = $accessLevel;
+
+        if (!$request->bearerToken()) {
             return $this->unauthorizedResponse();
         }
 
-        $token = $this->parseToken($token);
+        $token = $this->parseToken($request->bearerToken());
 
-        if ($this->isTokenExpired($token) || !$this->isUserLevelValid($token)) {
+
+        if (is_null($token) || $this->isTokenExpired($token) || !$this->isAccessLevelValid($token)) {
             return $this->unauthorizedResponse();
         }
+
 
         $userUuid = $token->claims()->get('user_uuid');
         $tokenId = $token->claims()->get('jti');
@@ -50,12 +52,12 @@ final class Jwt
         return $token->claims()->get('exp') < new \DateTimeImmutable();
     }
 
-    private function isUserLevelValid(UnencryptedToken $token): bool
+    private function isAccessLevelValid(UnencryptedToken $token): bool
     {
-        return $token->claims()->get('user_level') === $this->userLevel;
+        return $token->claims()->get('access_level') === $this->accessLevel;
     }
 
-    private function parseToken(string $token):?UnencryptedToken
+    private function parseToken(string $token): ?UnencryptedToken
     {
         try {
             return \App\Facades\Jwt::parseToken($token);
@@ -64,13 +66,15 @@ final class Jwt
         }
     }
 
-    private function getUserByUuidAndTokenId(string $userUuid, int $tokenId):User|null
-    {
+    private function getUserByUuidAndTokenId(
+        string $userUuid,
+        int $tokenId
+    ): User|null {
         return User::where('uuid', '=', $userUuid)->hasToken($tokenId)->first();
     }
 
-    private function unauthorizedResponse(string $message = 'Unauthorized'):JsonResponse
-    {
+    private function unauthorizedResponse(string $message = 'Unauthorized'
+    ): JsonResponse {
         return response()->json([
             'status' => 'error',
             'message' => $message,
