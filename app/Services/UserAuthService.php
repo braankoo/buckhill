@@ -11,19 +11,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\UnencryptedToken;
 
-final class TokenService
+final class UserAuthService
 {
     /**
      * @param array<string, int|string> $attributes
      * @param class-string<JsonResource> $resource
      *
-     * @return JsonResource|false
+     * @return JsonResource
+     * @throws \ErrorException
      */
     public function create(
         array $attributes,
         string $resource,
-    ): JsonResource|false {
+    ): JsonResource {
         try {
             DB::beginTransaction();
             $password = (string)$attributes['password'];
@@ -47,12 +49,14 @@ final class TokenService
                 'Error while creating new regular user',
                 [$e->getMessage(), $e->getTrace()]
             );
-
-            return false;
+            throw new \ErrorException('Error occured');
         }
     }
 
-    public function login(User $user): Token|false
+    /**
+     * @throws \Exception|\Throwable
+     */
+    public function login(User $user): Token
     {
         try {
             DB::beginTransaction();
@@ -68,28 +72,42 @@ final class TokenService
                 ]
             );
             DB::commit();
+            return $token;
         } catch (\Throwable $e) {
             Log::debug(
                 'Error while logging in',
                 [$e->getMessage(), $e->getTrace()]
             );
-
-            return false;
+            DB::rollBack();
+            throw new \ErrorException('Error');
         }
-
-        return $token;
     }
 
     /**
-     * @return array<int,int>
+     * @param string $token
+     * @return bool
+     * @throws \Exception|\Throwable
      */
-    public function logout(Request $request): array
+    public function logout(string $token): bool
     {
-        $token = Jwt::parseToken($request->bearerToken());
-
+        $token = Jwt::parseToken($token);
         $userUuid = $token->claims()->get('user_uuid');
         $tokenId = $token->claims()->get('jti');
+        $user = User::whereUuid($userUuid)->firstOrFail();
+        try {
+            DB::beginTransaction();
+            $user->tokens()->where('unique_id', '=', $tokenId)->delete();
+            DB::commit();
+            return true;
+        } catch (\Throwable $e) {
 
-        return [$userUuid, $tokenId];
+            Log::debug(
+                'Error while logging out',
+                [$e->getMessage(), $e->getTrace()]
+            );
+            DB::rollBack();
+            throw new \ErrorException('Error');
+        }
     }
+
 }
