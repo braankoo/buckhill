@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\File
+ * App\Models\File.
  *
  * @property int $id
  * @property string $uuid

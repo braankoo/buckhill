@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\OrderStatus;
-use App\Services\UserAuthService;
 
 class OrderStatusesTest extends Base
 {

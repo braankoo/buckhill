@@ -5,30 +5,26 @@ use App\Http\Controllers\User\ForgotPasswordController;
 use App\Http\Controllers\User\OrderController;
 use App\Http\Controllers\User\UserController;
 
-Route::prefix('user')->name('user.')->group(function () {
-    Route::post('create', [AuthController::class, 'create']);
-    Route::post('login', [AuthController::class, 'login'])->name('login');
-    Route::get('logout', [AuthController::class, 'logout']);
+Route::apiResource('user', UserController::class)->only(['show', 'edit', 'destroy']);
+
+Route::name('user.')->group(function () {
+    Route::post('/user/create', [AuthController::class, 'create']);
+    Route::post('/user/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/user/logout', [AuthController::class, 'logout']);
 
     Route::post(
-        '/forgot-password',
+        '/user/forgot-password',
         [
             ForgotPasswordController::class,
             'createResetToken',
         ]
     );
     Route::post(
-        '/reset-password-token',
+        '/user/reset-password-token',
         [
             ForgotPasswordController::class,
             'resetPassword',
         ]
     );
-
-    Route::get('/', [UserController::class, 'show'])->name('index');
-    Route::delete('/', [UserController::class, 'destroy'])->name('delete');
-    Route::put('edit', [UserController::class, 'edit'])->name('update');
-
-    Route::get('/orders', [OrderController::class, 'index'])
-        ->middleware('jwt');
+    Route::get('/user/orders', [OrderController::class, 'index'])->name('order.index');
 });

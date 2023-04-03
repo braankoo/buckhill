@@ -10,7 +10,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use OpenApi\Annotations as OA;
-use Psy\Readline\Hoa\FileException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 final class FileController extends Controller
@@ -60,16 +59,11 @@ final class FileController extends Controller
      *     )
      * )
      */
-
-    public function store(StoreRequest $request):JsonResponse
+    public function store(StoreRequest $request): JsonResponse
     {
-
         try {
-
             $file = $this->getUploadedFile($request->file('file'));
-
-        }catch (\InvalidArgumentException $e){
-
+        } catch (\InvalidArgumentException $e) {
             return Response::api(Response::HTTP_UNPROCESSABLE_ENTITY, 1, 'Wrong type');
         }
 
@@ -130,13 +124,16 @@ final class FileController extends Controller
         return response()->download(storage_path('app/' . $file->path), $file->name, $headers);
     }
 
-    private function getUploadedFile(array|UploadedFile|null $file):UploadedFile {
-
-        if (!$file instanceof UploadedFile) {
+    /**
+     * @param array<UploadedFile>|UploadedFile|null $file
+     * @return UploadedFile
+     */
+    private function getUploadedFile(array|UploadedFile|null $file): UploadedFile
+    {
+        if ( ! $file instanceof UploadedFile) {
             throw new InvalidArgumentException();
         }
+
         return $file;
-
     }
-
 }

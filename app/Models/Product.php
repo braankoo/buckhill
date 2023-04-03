@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Product
+ * App\Models\Product.
  *
+ * @property string $metadata
  * @property int $id
  * @property string $uuid
  * @property string $title
  * @property float $price
  * @property string $description
- * @property mixed $metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at

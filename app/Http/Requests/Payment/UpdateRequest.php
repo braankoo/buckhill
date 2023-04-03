@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Payment;
 
 use App\Rules\PaymentDetailsRule;
-use App\Rules\Product\MetaDataRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRequest extends FormRequest
@@ -25,7 +24,6 @@ final class UpdateRequest extends FormRequest
         return [
             'type' => 'bail|required|in:credit_card,cash_on_delivery,bank_transfer',
             'details' => ['required', new PaymentDetailsRule($this->input('type') ?? null)],
-
         ];
     }
 }

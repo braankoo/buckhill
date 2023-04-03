@@ -12,6 +12,7 @@ final class PostResource extends JsonResource
     {
         parent::__construct($resource);
     }
+
     /**
      * @return array<string, array<string>|string>
      */

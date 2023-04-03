@@ -21,29 +21,27 @@ final class MetaDataRule implements ValidationRule
     ): void {
         $values = json_decode($value, true);
 
-        if (!is_array($values)) {
-            $fail("$attribute must be valid JSON");
+        if ( ! is_array($values)) {
+            $fail($attribute . ' must be valid JSON');
 
             return;
         }
 
         $missingKeys = array_diff($this->allowed, array_keys($values));
         if (count($missingKeys) > 0) {
-            $fail("$attribute must contain " . implode(' and ', $missingKeys));
+            $fail($attribute . ' must contain ' . implode(' and ', $missingKeys));
 
             return;
         }
 
-        if (!Brand::where('uuid', $values['brand'])->exists()) {
+        if ( ! Brand::where('uuid', $values['brand'])->exists()) {
             $fail('Brand with given UUID does not exist.');
 
             return;
         }
 
-        if (!File::where('uuid', $values['image'])->exists()) {
+        if ( ! File::where('uuid', $values['image'])->exists()) {
             $fail('File with given UUID does not exist.');
-
-            return;
         }
     }
 

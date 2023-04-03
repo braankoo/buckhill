@@ -8,11 +8,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class ProductResource extends JsonResource
 {
-
     public function __construct(Product $resource)
     {
         parent::__construct($resource);
     }
+
     /**
      * @return array<string, array<string>|string>
      */

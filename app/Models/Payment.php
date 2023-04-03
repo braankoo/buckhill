@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Payment
+ * App\Models\Payment.
  *
+ * @property string $details
  * @property int $id
  * @property string $uuid
  * @property string $type
- * @property mixed $details
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\PaymentFactory factory($count = null, $state = [])

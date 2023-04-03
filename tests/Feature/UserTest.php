@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Services\UserAuthService;
-
 class UserTest extends Base
 {
     /**
@@ -11,7 +9,7 @@ class UserTest extends Base
      */
     public function test_index(): void
     {
-        $response = $this->get(route('user.index'));
+        $response = $this->get(route('user.order.index'));
 
         $response->assertStatus(401);
     }
@@ -21,7 +19,7 @@ class UserTest extends Base
         $this->httpRequestWithToken(
             $this->getAdminUser()
         )->get(
-            route('user.index')
+            route('user.order.index')
         )->assertStatus(401);
     }
 
@@ -30,7 +28,7 @@ class UserTest extends Base
         $this->httpRequestWithToken(
             $this->getRegularUser()
         )->get(
-            route('user.index')
+            route('user.order.index')
         )->assertStatus(200);
     }
 

@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Promotion
+ * App\Models\Promotion.
  *
+ * @property string $metadata
  * @property int $id
  * @property string $uuid
  * @property string $title
  * @property string $content
- * @property mixed $metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\PromotionFactory factory($count = null, $state = [])

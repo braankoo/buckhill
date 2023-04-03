@@ -14,29 +14,27 @@ final class Jwt
         Request $request,
         Closure $next
     ): Response {
-
-
-        if (!$request->bearerToken()) {
+        if ( ! $request->bearerToken()) {
             return $this->unauthorizedResponse();
         }
         $token = \App\Facades\Jwt::parseToken($request->bearerToken());
 
-        if (!\App\Facades\Jwt::validateToken($token) || $token->isExpired(
-                new \DateTimeImmutable()
-            )) {
+        if (
+            ! \App\Facades\Jwt::validateToken($token) ||
+            $token->isExpired(new \DateTimeImmutable())
+        ) {
             return $this->unauthorizedResponse();
         }
 
         return $next($request);
     }
 
-    private function unauthorizedResponse(string $message = 'Unauthorized'
+    private function unauthorizedResponse(
+        string $message = 'Unauthorized'
     ): JsonResponse {
         return response()->json([
             'status' => 'error',
             'message' => $message,
         ], HttpResponse::HTTP_UNAUTHORIZED);
     }
-
-
 }

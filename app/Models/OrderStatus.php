@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\OrderStatus
+ * App\Models\OrderStatus.
  *
  * @property int $id
  * @property string $uuid

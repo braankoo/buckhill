@@ -2,9 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Services\UserAuthService;
-
 class AdminTest extends Base
 {
     public function test_create(): void
@@ -49,7 +46,6 @@ class AdminTest extends Base
 
     public function test_user_listing_with_admin_user()
     {
-
         $this->httpRequestWithToken($this->getAdminUser())
         ->get(route('admin.user.index'))->assertStatus(200);
     }
@@ -77,7 +73,7 @@ class AdminTest extends Base
                 'password' => '123123123123',
                 'address' => '123123123123',
                 'phone_number' => '123123',
-                'email' => 'test@asdsd.comc'
+                'email' => 'test@asdsd.comc',
             ]
         );
         $response = json_decode($response->getContent(), true);

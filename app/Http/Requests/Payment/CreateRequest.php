@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Payment;
 
 use App\Rules\PaymentDetailsRule;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class CreateRequest extends FormRequest

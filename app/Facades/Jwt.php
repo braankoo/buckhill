@@ -5,7 +5,6 @@ namespace App\Facades;
 use App\Services\Auth\JWT\JWT as JWTInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Facade;
-use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 
 /**

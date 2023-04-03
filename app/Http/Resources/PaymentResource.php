@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class PaymentResource extends JsonResource
 {
-
     public function __construct(Payment $resource)
     {
         parent::__construct($resource);

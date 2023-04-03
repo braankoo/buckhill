@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\File;
-use App\Services\UserAuthService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

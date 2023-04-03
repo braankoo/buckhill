@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\Post
+ * App\Models\Post.
  *
+ * @property string $metadata
  * @property int $id
  * @property string $uuid
  * @property string $title
  * @property string $slug
  * @property string $content
- * @property mixed $metadata
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
@@ -35,7 +35,7 @@ final class Post extends Model
 {
     use HasFactory;
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'uuid';
     }
@@ -43,6 +43,6 @@ final class Post extends Model
     protected static function boot()
     {
         parent::boot();
-        UuidHelper::boot(new static());
+        UuidHelper::boot(new self());
     }
 }

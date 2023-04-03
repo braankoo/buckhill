@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Brand;
-use App\Services\UserAuthService;
 
 class BrandTest extends Base
 {

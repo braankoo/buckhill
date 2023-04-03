@@ -18,9 +18,9 @@ final class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['jwt','jwt.auth','role:admin']);
-
+        $this->middleware(['jwt', 'jwt.auth', 'role:admin']);
     }
+
     /**
      * @OA\Get(
      *     path="/api/v1/admin/user-listing",

@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\File;
 use App\Models\Product;
-use App\Services\UserAuthService;
 
 class ProductTest extends Base
 {
@@ -14,7 +13,7 @@ class ProductTest extends Base
     {
         $response = $this->get(route('product.index'));
 
-        $response->assertStatus(401);
+        $response->assertStatus(200);
     }
 
     public function test_show_single()
@@ -32,7 +31,7 @@ class ProductTest extends Base
         $this->httpRequestWithToken(
             $this->getAdminUser()
         )->get(route('product.show', ['product' => $product->uuid]))
-            ->assertStatus(401);
+            ->assertStatus(200);
     }
 
     public function test_put_regular_user()

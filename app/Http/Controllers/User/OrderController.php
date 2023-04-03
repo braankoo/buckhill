@@ -13,7 +13,7 @@ final class OrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['jwt','jwt.auth','role:user']);
+        $this->middleware(['jwt', 'jwt.auth', 'role:user']);
     }
 
     /**

@@ -12,8 +12,6 @@ use Throwable;
 
 final class AuthController extends BaseAuthController
 {
-
-
     public function __construct(UserAuthService $service)
     {
         parent::__construct($service, 1);

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * App\Models\Brand
+ * App\Models\Brand.
  *
  * @property int $id
  * @property string $uuid
@@ -32,7 +32,6 @@ final class Brand extends Model
 {
     use HasFactory;
 
-
     protected $fillable = ['title'];
 
     public function getRouteKeyName(): string
@@ -46,11 +45,11 @@ final class Brand extends Model
 
         UuidHelper::boot(new static());
 
-        self::creating(function (Brand $model) {
+        self::creating(function (self $model) {
             $model->setAttribute('slug', Str::slug($model->title));
         });
 
-        self::updating(function (Brand $model) {
+        self::updating(function (self $model) {
             $model->setAttribute('slug', Str::slug($model->title));
         });
     }

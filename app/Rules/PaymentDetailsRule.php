@@ -15,7 +15,7 @@ final class PaymentDetailsRule implements Rule
     }
 
     /**
-     * @param $attribute
+     * @param string $attribute
      * @param string $value
      *
      * @return bool
@@ -34,7 +34,7 @@ final class PaymentDetailsRule implements Rule
 
         $validator = Validator::make(json_decode($value, true), $rules);
 
-        return !$validator->fails();
+        return ! $validator->fails();
     }
 
     public function message(): string

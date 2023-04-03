@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Models\JwtToken
+ * App\Models\JwtToken.
  *
+ * @property string|null $restrictions
+ * @property string|null $permissions
  * @property int $id
  * @property int $user_id
  * @property string $unique_id
  * @property string $token_title
- * @property mixed|null $restrictions
- * @property mixed|null $permissions
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $expires_at

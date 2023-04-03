@@ -13,9 +13,6 @@ use Throwable;
 
 final class AuthController extends BaseAuthController
 {
-
-
-
     public function __construct(UserAuthService $service)
     {
         parent::__construct($service);
@@ -101,7 +98,7 @@ final class AuthController extends BaseAuthController
      */
     public function create(CreateRequest $request): JsonResponse
     {
-       return parent::create($request);
+        return parent::create($request);
     }
 
     /**

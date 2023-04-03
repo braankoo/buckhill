@@ -16,7 +16,6 @@ use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
-use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 
 final class LcobucciJWT implements JWT
@@ -54,9 +53,10 @@ final class LcobucciJWT implements JWT
         if ($keyPath === '') {
             throw new \InvalidArgumentException('Key file path is empty');
         }
-        if (!file_exists($keyPath)) {
+        if ( ! file_exists($keyPath)) {
             throw new \InvalidArgumentException('Key file not found: ');
         }
+
         return Configuration::forAsymmetricSigner(
             new Sha256(),
             InMemory::file($keyPath),
@@ -73,7 +73,7 @@ final class LcobucciJWT implements JWT
         return $tokenBuilder
             ->issuedBy(config('app.url'))
             ->permittedFor(config('app.url'))
-            ->identifiedBy((string)$user->id)
+            ->identifiedBy((string) $user->id)
             ->issuedAt($now)
             ->expiresAt(
                 $now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds')
@@ -83,13 +83,14 @@ final class LcobucciJWT implements JWT
             ->getToken($configuration->signer(), $configuration->signingKey());
     }
 
-    public function validateToken(UnencryptedToken $token):bool
+    public function validateToken(UnencryptedToken $token): bool
     {
         $validator = new Validator();
         $constraints = [
             new IssuedBy(config('app.url')),
             new PermittedFor(config('app.url')),
         ];
+
         return $validator->validate($token, ...$constraints);
     }
 }

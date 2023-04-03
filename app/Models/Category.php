@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * App\Models\Category
+ * App\Models\Category.
  *
  * @property int $id
  * @property string $uuid
@@ -44,11 +44,11 @@ final class Category extends Model
         parent::boot();
         UuidHelper::boot(new self());
 
-        self::creating(function (Category $model) {
+        self::creating(function (self $model) {
             $model->setAttribute('slug', Str::slug($model->title));
         });
 
-        self::updating(function (Category $model) {
+        self::updating(function (self $model) {
             $model->setAttribute('slug', Str::slug($model->title));
         });
     }

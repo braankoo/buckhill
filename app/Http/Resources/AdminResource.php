@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 final class AdminResource extends JsonResource
 {
-
     public function __construct(User $resource)
     {
         parent::__construct($resource);

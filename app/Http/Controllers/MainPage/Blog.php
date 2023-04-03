@@ -122,7 +122,7 @@ final class Blog extends Controller
      * )
      * )
      */
-    public function single(Post $post):JsonResponse
+    public function single(Post $post): JsonResponse
     {
         return Response::api(HttpResponse::HTTP_OK, 1, new PostResource($post));
     }

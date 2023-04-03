@@ -16,7 +16,6 @@ use Throwable;
 
 final class BrandController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware(['jwt', 'jwt.auth', 'role:user'])->except(['index', 'show']);
@@ -131,7 +130,7 @@ final class BrandController extends Controller
      *
      * @throws Throwable
      */
-    public function store(CreateRequest $request):JsonResponse
+    public function store(CreateRequest $request): JsonResponse
     {
         $brand = Brand::create($request->safe()->all());
 
@@ -171,7 +170,7 @@ final class BrandController extends Controller
      *     )
      * )
      */
-    public function show(Brand $brand):JsonResponse
+    public function show(Brand $brand): JsonResponse
     {
         return Response::api(HttpResponse::HTTP_OK, 1, $brand);
     }

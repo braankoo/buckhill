@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
-use App\Services\UserAuthService;
 
 class CategoryTest extends Base
 {

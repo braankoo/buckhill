@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * App\Models\Order
+ * App\Models\Order.
  *
+ * @property string $metadata
+ * @property string $address
+ * @property string $products
  * @property int $id
  * @property string $uuid
- * @property mixed $products
- * @property mixed $address
  * @property float|null $delivery_fee
  * @property float $amount
  * @property \Illuminate\Support\Carbon|null $created_at

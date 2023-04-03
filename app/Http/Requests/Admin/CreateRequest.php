@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -19,7 +18,7 @@ final class CreateRequest extends FormRequest
     /**
      * @return array<string, array<int, Password|string>|string>
      */
-    public function rules():array
+    public function rules(): array
     {
         return [
             'first_name' => 'required|max:255',

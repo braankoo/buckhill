@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Order;
 
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class ShipmentLocatorRequest extends FormRequest

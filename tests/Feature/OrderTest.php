@@ -6,15 +6,12 @@ use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Payment;
 use App\Models\Product;
-use App\Services\UserAuthService;
 
 class OrderTest extends Base
 {
     public function test_index(): void
     {
-
         $response = $this->get(route('order.index'));
-
 
         $response->assertStatus(401);
     }

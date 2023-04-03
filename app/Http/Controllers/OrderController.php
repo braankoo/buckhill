@@ -187,13 +187,13 @@ final class OrderController extends Controller
      *
      * @throws Throwable
      */
-    public function store(CreateRequest $request):JsonResponse
+    public function store(CreateRequest $request): JsonResponse
     {
         $attributes = $request->safe()->all();
 
         $status = OrderStatus::whereUuid($attributes['order_status_uuid'])->firstOrFail();
         $payment = Payment::whereUuid('uuid')->firstOrFail();
-        $user = User::whereId((int)\Auth::id())->firstOrFail();
+        $user = User::whereId((int) \Auth::id())->firstOrFail();
 
         $order = $user->orders()->create(
             [
@@ -246,7 +246,7 @@ final class OrderController extends Controller
      *     )
      * )
      */
-    public function show(Order $order):JsonResponse
+    public function show(Order $order): JsonResponse
     {
         return Response::api(
             HttpResponse::HTTP_OK,

@@ -15,7 +15,7 @@ final class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['jwt','jwt.auth','role:user']);
+        $this->middleware(['jwt', 'jwt.auth', 'role:user']);
     }
 
     /**
@@ -49,8 +49,7 @@ final class UserController extends Controller
     {
         $user = User::whereId(\Auth::id())->firstOrFail();
 
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]
-        );
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
     }
 
     /**
@@ -135,8 +134,8 @@ final class UserController extends Controller
     {
         $user = User::whereId(\Auth::id())->firstOrFail();
         $user->update($request->safe()->all());
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]
-        );
+
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
     }
 
     /**
