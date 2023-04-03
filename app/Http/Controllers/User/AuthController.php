@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\LoginRequest;
+use App\Http\BaseAuthController;
 use App\Http\Requests\User\CreateRequest;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Services\TokenService;
+use App\Http\Requests\User\LoginRequest;
+use App\Services\UserAuthService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
-use Symfony\Component\HttpFoundation\Response as Code;
 use Throwable;
 
-final class AuthController extends Controller
+final class AuthController extends BaseAuthController
 {
-    private TokenService $tokenService;
 
-    public function __construct(TokenService $userAuthService)
+
+
+    public function __construct(UserAuthService $service)
     {
-        $this->tokenService = $userAuthService;
-        $this->middleware('jwt')->only('logout');
+        parent::__construct($service);
     }
 
     /**
@@ -103,18 +99,9 @@ final class AuthController extends Controller
      *
      * @throws Throwable
      */
-    public function create(CreateRequest $request):JsonResponse
+    public function create(CreateRequest $request): JsonResponse
     {
-        $attributes = $request->safe()->merge(['is_admin' => 0])->all();
-        $user = $this->tokenService->create(
-            $attributes,
-            UserResource::class
-        );
-        if (!$user) {
-            return Response::api(Code::HTTP_INTERNAL_SERVER_ERROR, 0, []);
-        }
-
-        return Response::api(200, 1, $user);
+       return parent::create($request);
     }
 
     /**
@@ -164,26 +151,7 @@ final class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->safe()->only('email', 'password');
-        if (!Auth::attempt($credentials) || Auth::user()->is_admin) {
-            return Response::api(
-                Code::HTTP_UNAUTHORIZED,
-                0,
-                [],
-                'Failed to authenticate user'
-            );
-        }
-        $token = $this->tokenService->login(Auth::user());
-        if (!$token) {
-            return Response::api(
-                Code::HTTP_UNAUTHORIZED,
-                0,
-                [],
-                'Failed to authenticate user'
-            );
-        }
-
-        return Response::api(Code::HTTP_OK, 1, ['token' => $token->toString()]);
+        return parent::login($request);
     }
 
     /**
@@ -213,12 +181,8 @@ final class AuthController extends Controller
      *     )
      * )
      */
-    public function logout(\Illuminate\Http\Request $request): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        [$userUuid, $tokenId] = $this->tokenService->logout($request);
-        $user = User::whereUuid($userUuid)->first();
-        $user->tokens()->whereUniqueId($tokenId)->delete();
-
-        return Response::api(Code::HTTP_OK, 1, []);
+        return parent::logout($request);
     }
 }
