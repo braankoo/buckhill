@@ -2,13 +2,13 @@
 
 namespace App\Services\Auth\JWT;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Models\User;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 
 interface JWT
 {
-    public function provideToken(Authenticatable $user): UnencryptedToken;
+    public function provideToken(User $user): UnencryptedToken;
 
     public function parseToken(string $token): Token;
 }

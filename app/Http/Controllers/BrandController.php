@@ -129,7 +129,7 @@ final class BrandController extends Controller
     {
         $brand = Brand::create($request->safe()->all());
 
-        return Response::api(HttpResponse::HTTP_OK, '1', $brand);
+        return Response::api(HttpResponse::HTTP_OK, 1, $brand);
     }
 
     /**
@@ -167,7 +167,7 @@ final class BrandController extends Controller
      */
     public function show(Brand $brand)
     {
-        return Response::api(HttpResponse::HTTP_OK, '1', $brand);
+        return Response::api(HttpResponse::HTTP_OK, 1, $brand);
     }
 
     /**

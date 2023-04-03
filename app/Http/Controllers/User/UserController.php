@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
@@ -46,7 +47,9 @@ final class UserController extends Controller
      */
     public function show(): JsonResponse
     {
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource(\Auth::user())]);
+        $user = User::find(\Auth::id());
+
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
     }
 
     /**
@@ -130,8 +133,8 @@ final class UserController extends Controller
     public function edit(UpdateRequest $request): JsonResponse
     {
         \Auth::user()->update($request->safe()->all());
-
-        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource(\Auth::user())]);
+        $user = User::find(\Auth::id());
+        return Response::api(HttpResponse::HTTP_OK, 1, [new UserResource($user)]);
     }
 
     /**

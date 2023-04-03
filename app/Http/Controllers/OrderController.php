@@ -92,8 +92,10 @@ final class OrderController extends Controller
      *     )
      * )
      */
-    public function index(Request $request, Paginator $paginator): LengthAwarePaginator
-    {
+    public function index(
+        Request $request,
+        Paginator $paginator
+    ): LengthAwarePaginator {
         $data = $paginator->paginateRequest($request, Order::query());
         $data->getCollection()->transform(function ($value) {
             return new OrderResource($value);
@@ -188,20 +190,32 @@ final class OrderController extends Controller
     {
         $attributes = $request->safe()->all();
 
-        $status = OrderStatus::where('uuid', '=', $attributes['order_status_uuid'])->first();
-        $payment = Payment::where('uuid', '=', $attributes['payment_uuid'])->first();
+        $status = OrderStatus::where(
+            'uuid',
+            '=',
+            $attributes['order_status_uuid']
+        )->first();
+        $payment = Payment::where(
+            'uuid',
+            '=',
+            $attributes['payment_uuid']
+        )->first();
 
         $order = $request->user()->orders()->create(
             [
-                'products' => json_encode($attributes['products'], true),
-                'address' => json_encode($attributes['address'], true),
+                'products' => json_encode($attributes['products']),
+                'address' => json_encode($attributes['address']),
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
                 'payment_id' => $payment->id,
             ]
         );
 
-        return Response::api(HttpResponse::HTTP_OK, '1', new OrderResource($order));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new OrderResource($order)
+        );
     }
 
     /**
@@ -240,7 +254,11 @@ final class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return Response::api(HttpResponse::HTTP_OK, '1', new OrderResource($order));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new OrderResource($order)
+        );
     }
 
     /**
@@ -336,20 +354,32 @@ final class OrderController extends Controller
     {
         $attributes = $request->safe()->all();
 
-        $status = OrderStatus::where('uuid', '=', $attributes['order_status_uuid'])->first();
-        $payment = Payment::where('uuid', '=', $attributes['payment_uuid'])->first();
+        $status = OrderStatus::where(
+            'uuid',
+            '=',
+            $attributes['order_status_uuid']
+        )->first();
+        $payment = Payment::where(
+            'uuid',
+            '=',
+            $attributes['payment_uuid']
+        )->first();
 
         $order->update(
             [
-                'products' => json_encode($attributes['products'], true),
-                'address' => json_encode($attributes['address'], true),
+                'products' => json_encode($attributes['products']),
+                'address' => json_encode($attributes['address']),
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
                 'payment_id' => $payment->id,
             ]
         );
 
-        return Response::api(HttpResponse::HTTP_OK, 1, new OrderResource($order));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new OrderResource($order)
+        );
     }
 
     /**
@@ -433,9 +463,13 @@ final class OrderController extends Controller
 
         $productsAndQuantity = array_map(function ($product) {
             return [
-                    'product' => Product::firstWhere('uuid', '=', $product['product']),
-                    'quantity' => $product['quantity'],
-                ];
+                'product' => Product::firstWhere(
+                    'uuid',
+                    '=',
+                    $product['product']
+                ),
+                'quantity' => $product['quantity'],
+            ];
         }, $products);
 
         $data = [
@@ -632,8 +666,10 @@ final class OrderController extends Controller
      *     )
      * )
      */
-    public function dashboard(Request $request, Paginator $paginator): Collection
-    {
+    public function dashboard(
+        Request $request,
+        Paginator $paginator
+    ): Collection {
         $query = Order::query();
 
         $query = $this->filterByDateRange($request, $query);
@@ -658,7 +694,7 @@ final class OrderController extends Controller
     }
 
     private function filterByDateRange(
-        ShipmentLocatorRequest $request,
+        Request $request,
         Builder $query
     ): Builder {
         if ($request->has('dateRange')) {
@@ -675,14 +711,20 @@ final class OrderController extends Controller
     }
 
     private function filterByFixedRange(
-        ShipmentLocatorRequest $request,
+        Request $request,
         Builder $query
     ): Builder {
         if ($request->has('fixedRange')) {
             return match ($request->input('fixedRange')) {
                 'today' => $query->where('created_at', '=', Carbon::today()),
-                'monthly' => $query->whereBetween('created_at', [Carbon::now()->subMonth(), Carbon::now()]),
-                'yearly' => $query->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()]),
+                'monthly' => $query->whereBetween(
+                    'created_at',
+                    [Carbon::now()->subMonth(), Carbon::now()]
+                ),
+                'yearly' => $query->whereBetween(
+                    'created_at',
+                    [Carbon::now()->subYear(), Carbon::now()]
+                ),
                 default => $query
             };
         }

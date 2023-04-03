@@ -17,7 +17,7 @@ use Lcobucci\JWT\UnencryptedToken;
 
 final class LcobucciJWT implements JWT
 {
-    public function provideToken(Authenticatable $user): UnencryptedToken
+    public function provideToken(User $user): UnencryptedToken
     {
         $tokenBuilder = (new Builder(new JoseEncoder(), ChainedFormatter::default()));
 
@@ -51,7 +51,7 @@ final class LcobucciJWT implements JWT
         return $tokenBuilder
             ->issuedBy(config('app.url'))
             ->permittedFor(config('app.url'))
-            ->identifiedBy($user->id)
+            ->identifiedBy((string)$user->id)
             ->issuedAt($now)
             ->expiresAt($now->modify('+ ' . config('jwt')['JWT_TTL'] . ' seconds'))
             ->withClaim('user_uuid', $user->uuid)

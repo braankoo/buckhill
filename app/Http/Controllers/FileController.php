@@ -72,7 +72,7 @@ final class FileController extends Controller
             ]
         );
 
-        return Response::api(Response::HTTP_OK, '1', $file);
+        return Response::api(Response::HTTP_OK, 1, $file);
     }
 
     /**
