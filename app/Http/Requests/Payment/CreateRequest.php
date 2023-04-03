@@ -17,9 +17,7 @@ final class CreateRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, Rule|array|string>
+     * @return array<string, array<string|PaymentDetailsRule>|string>
      */
     public function rules(): array
     {

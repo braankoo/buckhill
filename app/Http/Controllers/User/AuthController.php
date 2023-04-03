@@ -103,7 +103,7 @@ final class AuthController extends Controller
      *
      * @throws Throwable
      */
-    public function create(CreateRequest $request)
+    public function create(CreateRequest $request):JsonResponse
     {
         $attributes = $request->safe()->merge(['is_admin' => 0])->all();
         $user = $this->tokenService->create(

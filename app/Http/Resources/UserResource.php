@@ -9,11 +9,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class UserResource extends JsonResource
 {
 
+
     public function __construct(User $resource)
     {
         parent::__construct($resource);
     }
 
+    /**
+     * @return array<string, array<string>|string>
+     */
     public function toArray(Request $request): array
     {
         if (count($this->additional)) {
@@ -23,6 +27,9 @@ final class UserResource extends JsonResource
         return $this->default();
     }
 
+    /**
+     * @return array<string, array<string>|string>
+     */
     private function default(): array
     {
         return [

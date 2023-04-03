@@ -4,14 +4,16 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Lcobucci\JWT\UnencryptedToken;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 final class Jwt
 {
-    private $userLevel;
+    private string $userLevel;
 
     public function handle(
         Request $request,
@@ -34,7 +36,7 @@ final class Jwt
         $tokenId = $token->claims()->get('jti');
         $user = $this->getUserByUuidAndTokenId($userUuid, $tokenId);
 
-        if (!$user) {
+        if (is_null($user)) {
             return $this->unauthorizedResponse();
         }
 
@@ -43,17 +45,17 @@ final class Jwt
         return $next($request);
     }
 
-    private function isTokenExpired($token): bool
+    private function isTokenExpired(UnencryptedToken $token): bool
     {
         return $token->claims()->get('exp') < new \DateTimeImmutable();
     }
 
-    private function isUserLevelValid($token): bool
+    private function isUserLevelValid(UnencryptedToken $token): bool
     {
         return $token->claims()->get('user_level') === $this->userLevel;
     }
 
-    private function parseToken($token)
+    private function parseToken(string $token):?UnencryptedToken
     {
         try {
             return \App\Facades\Jwt::parseToken($token);
@@ -62,12 +64,12 @@ final class Jwt
         }
     }
 
-    private function getUserByUuidAndTokenId($userUuid, $tokenId)
+    private function getUserByUuidAndTokenId(string $userUuid, int $tokenId):User|null
     {
         return User::where('uuid', '=', $userUuid)->hasToken($tokenId)->first();
     }
 
-    private function unauthorizedResponse($message = 'Unauthorized')
+    private function unauthorizedResponse(string $message = 'Unauthorized'):JsonResponse
     {
         return response()->json([
             'status' => 'error',

@@ -42,6 +42,9 @@ final class PaymentDetailsRule implements Rule
         return 'Invalid payment details provided.';
     }
 
+    /**
+     * @return array<string, array<string>>
+     */
     private function validationRules(): array
     {
         return [

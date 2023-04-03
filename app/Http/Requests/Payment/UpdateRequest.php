@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Payment;
 
 use App\Rules\PaymentDetailsRule;
+use App\Rules\Product\MetaDataRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRequest extends FormRequest
@@ -16,9 +17,7 @@ final class UpdateRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, array<string|PaymentDetailsRule>|string>
      */
     public function rules(): array
     {

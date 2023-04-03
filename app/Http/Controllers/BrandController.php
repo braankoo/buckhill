@@ -165,7 +165,7 @@ final class BrandController extends Controller
      *     )
      * )
      */
-    public function show(Brand $brand)
+    public function show(Brand $brand):JsonResponse
     {
         return Response::api(HttpResponse::HTTP_OK, 1, $brand);
     }

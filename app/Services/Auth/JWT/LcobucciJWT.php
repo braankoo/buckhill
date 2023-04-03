@@ -12,6 +12,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Token\Builder;
+use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\UnencryptedToken;
 
@@ -28,6 +29,9 @@ final class LcobucciJWT implements JWT
 
     public function parseToken(string $token): Token
     {
+        if (empty($token)) {
+            throw new InvalidTokenStructure('Token cannot be empty');
+        }
         $parser = new Parser(new JoseEncoder());
 
         return $parser->parse($token);
@@ -35,9 +39,16 @@ final class LcobucciJWT implements JWT
 
     private function getConfiguration(): Configuration
     {
+        $keyPath = base_path('/token-key.pem');
+        if (empty($keyPath)) {
+            throw new \InvalidArgumentException('Key file path is empty');
+        }
+        if (!file_exists($keyPath)) {
+            throw new \InvalidArgumentException('Key file not found: ');
+        }
         return Configuration::forAsymmetricSigner(
             new Sha256(),
-            InMemory::file(base_path('/token-key.pem')),
+            InMemory::file($keyPath),
             InMemory::base64Encoded(config('jwt')['JWT_KEY'])
         );
     }

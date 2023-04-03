@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Facades\Jwt;
 use App\Models\User;
+use App\Rules\PaymentDetailsRule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
@@ -14,26 +15,19 @@ use Lcobucci\JWT\Token;
 final class TokenService
 {
     /**
-     * @param array{
-     *     first_name:string,
-     *     last_name:string,
-     *     is_admin:bool,
-     *     email:string,
-     *     address:string,
-     *     phone_number:string,
-     *     is_marketing: bool,
-     *     password: string} $attributes
-     * @param string $resource
+     * @param array<string, int|string> $attributes
+     * @param class-string<JsonResource> $resource
      *
      * @return JsonResource|false
      */
     public function create(
         array $attributes,
-        $resource,
+        string $resource,
     ): JsonResource|false {
         try {
             DB::beginTransaction();
-            $attributes['password'] = Hash::make($attributes['password']);
+            $password = (string)$attributes['password'];
+            $attributes['password'] = Hash::make($password);
             $user = User::create($attributes);
             $token = Jwt::provideToken($user);
 
@@ -86,6 +80,9 @@ final class TokenService
         return $token;
     }
 
+    /**
+     * @return array<int,int>
+     */
     public function logout(Request $request): array
     {
         $token = Jwt::parseToken($request->bearerToken());

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Services\Paginator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -121,7 +122,7 @@ final class Blog extends Controller
      * )
      * )
      */
-    public function single(Post $post)
+    public function single(Post $post):JsonResponse
     {
         return Response::api(HttpResponse::HTTP_OK, 1, new PostResource($post));
     }

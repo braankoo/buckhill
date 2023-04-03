@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\File\StoreRequest;
 use App\Models\File;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -56,10 +58,11 @@ final class FileController extends Controller
      *     )
      * )
      */
-    public function store(StoreRequest $request)
-    {
-        $file = $request->file('file');
 
+    public function store(StoreRequest $request):JsonResponse
+    {
+
+        $file = $this->getUploadedFile($request->file('file'));
         $uuid = Str::uuid();
         $path = $file->storeAs('pet-shop', $uuid . '.' . $file->getClientOriginalExtension());
         $file = File::create(
@@ -68,7 +71,7 @@ final class FileController extends Controller
                 'name' => $file->getFilename(),
                 'path' => $path,
                 'size' => $file->getSize(),
-                'type' => $file->getMimeType(),
+                'type' => $file->getType(),
             ]
         );
 
@@ -116,4 +119,18 @@ final class FileController extends Controller
 
         return response()->download(storage_path('app/' . $file->path), $file->name, $headers);
     }
+
+    /**
+     * @param array|UploadedFile|UploadedFile[]|null $file
+     * @return UploadedFile|null
+     */
+    private function getUploadedFile(array|UploadedFile|null $file):?UploadedFile {
+
+        if (!$file instanceof UploadedFile) {
+            return null;
+        }
+        return $file;
+
+    }
+
 }

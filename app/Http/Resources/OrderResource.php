@@ -13,6 +13,9 @@ final class OrderResource extends JsonResource
         parent::__construct($resource);
     }
 
+    /**
+     * @return array<string, array<string>|string>
+     */
     public function toArray(Request $request): array
     {
         return [

@@ -186,7 +186,7 @@ final class OrderController extends Controller
      *
      * @throws Throwable
      */
-    public function store(CreateRequest $request)
+    public function store(CreateRequest $request):JsonResponse
     {
         $attributes = $request->safe()->all();
 
@@ -252,7 +252,7 @@ final class OrderController extends Controller
      *     )
      * )
      */
-    public function show(Order $order)
+    public function show(Order $order):JsonResponse
     {
         return Response::api(
             HttpResponse::HTTP_OK,

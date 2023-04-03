@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\User;
 
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -17,9 +16,7 @@ final class CreateRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, Rule|array|string>
+     * @return array<string, array<string|Password>|string>
      */
     public function rules(): array
     {

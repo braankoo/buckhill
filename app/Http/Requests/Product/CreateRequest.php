@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Product;
 
 use App\Rules\Product\MetaDataRule;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class CreateRequest extends FormRequest
@@ -17,9 +16,7 @@ final class CreateRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, Rule|array|string>
+     * @return array<string, array<string|MetaDataRule>|string>
      */
     public function rules(): array
     {

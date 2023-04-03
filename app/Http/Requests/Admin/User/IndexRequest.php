@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\User;
 
+use App\Rules\PaymentDetailsRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class IndexRequest extends FormRequest
@@ -15,9 +16,7 @@ final class IndexRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, array<string>|string>
      */
     public function rules(): array
     {
