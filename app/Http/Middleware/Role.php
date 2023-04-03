@@ -8,26 +8,25 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-final class Jwt
+class Role
 {
-    public function handle(
-        Request $request,
-        Closure $next
-    ): Response {
+    /**
+     * Handle an incoming request.
+     *
+     * @param \Closure(Request): (HttpResponse) $next
+     */
+    public function handle(Request $request, Closure $next, string|false $role = false): Response {
 
-
-        if (!$request->bearerToken()) {
-            return $this->unauthorizedResponse();
-        }
-        $token = \App\Facades\Jwt::parseToken($request->bearerToken());
-
-        if (!\App\Facades\Jwt::validateToken($token) || $token->isExpired(
-                new \DateTimeImmutable()
-            )) {
-            return $this->unauthorizedResponse();
+        $user = \Auth::user();
+        if ($role === 'admin' && $user->is_admin) {
+            return $next($request);
         }
 
-        return $next($request);
+        if ($role === 'user' && !$user->is_admin) {
+            return $next($request);
+        }
+
+        return $this->unauthorizedResponse();
     }
 
     private function unauthorizedResponse(string $message = 'Unauthorized'
@@ -37,6 +36,4 @@ final class Jwt
             'message' => $message,
         ], HttpResponse::HTTP_UNAUTHORIZED);
     }
-
-
 }
