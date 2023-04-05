@@ -19,14 +19,15 @@ final class ProductController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['jwt', 'jwt.auth', 'role:user'])->except(['index', 'show']);
+        $this->middleware(['jwt', 'jwt.auth', 'role:user'])->except(
+            ['index', 'show']
+        );
     }
 
     /**
      * @OA\Get(
      *     path="/api/v1/product",
      *     tags={"Products"},
-     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -104,17 +105,32 @@ final class ProductController extends Controller
      *             mediaType="application/x-www-form-urlencoded",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="type",
-     *                     type="string",
-     *                     description="Type of payment",
-     *                     enum={"cash_on_delivery", "credit_card", "bank_transfer"}
+     *                   property="category_uuid",
+     *                   description="Category UUID parameter",
+     *                   type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="details",
-     *                     type="object",
-     *                     description="Product details",
+     *                     property="title",
+     *                     type="string",
+     *                     description="Product title"
      *                 ),
-     *                 required={"type", "details"}
+     *                 @OA\Property(
+     *                     property="price",
+     *                     type="number",
+     *                     description="Product price",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string",
+     *                     description="Product description",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="metadata",
+     *                     type="object",
+     *                     description="Product metadata",
+     *                     example={"image": "string","brand": "string"}
+     *                 ),
+     *                 required={"category_uuid", "title", "price", "description", "metadata"}
      *             )
      *         )
      *     ),
@@ -146,14 +162,17 @@ final class ProductController extends Controller
     {
         $payment = Product::create($request->safe()->all());
 
-        return Response::api(HttpResponse::HTTP_OK, 1, new ProductResource($payment));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new ProductResource($payment)
+        );
     }
 
     /**
      * @OA\Get(
      *     path="/api/v1/product/{uuid}",
      *     tags={"Products"},
-     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="uuid",
      *         in="path",
@@ -185,7 +204,11 @@ final class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
-        return Response::api(HttpResponse::HTTP_OK, 1, new ProductResource($product));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new ProductResource($product)
+        );
     }
 
     /**
@@ -193,23 +216,45 @@ final class ProductController extends Controller
      *     path="/api/v1/product/{uuid}",
      *     tags={"Products"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         description="UUID parameter",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/x-www-form-urlencoded",
      *             @OA\Schema(
      *                 @OA\Property(
-     *                     property="type",
-     *                     type="string",
-     *                     description="Type of payment",
-     *                     enum={"cash_on_delivery", "credit_card", "bank_transfer"}
+     *                   property="category_uuid",
+     *                   description="Category UUID parameter",
+     *                   type="string"
      *                 ),
      *                 @OA\Property(
-     *                     property="details",
-     *                     type="object",
-     *                     description="Product details",
+     *                     property="title",
+     *                     type="string",
+     *                     description="Product title"
      *                 ),
-     *                 required={"type", "details"}
+     *                 @OA\Property(
+     *                     property="price",
+     *                     type="number",
+     *                     description="Product price",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     type="string",
+     *                     description="Product description",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="metadata",
+     *                     type="object",
+     *                     description="Product metadata",
+     *                     example={"image": "string","brand": "string"}
+     *                 ),
+     *                 required={"category_uuid", "title", "price", "description", "metadata"}
      *             )
      *         )
      *     ),
@@ -237,11 +282,17 @@ final class ProductController extends Controller
      *
      * @throws Throwable
      */
-    public function update(UpdateRequest $request, Product $product): JsonResponse
-    {
+    public function update(
+        UpdateRequest $request,
+        Product $product
+    ): JsonResponse {
         $product->update($request->safe()->all());
 
-        return Response::api(HttpResponse::HTTP_OK, 1, new ProductResource($product));
+        return Response::api(
+            HttpResponse::HTTP_OK,
+            1,
+            new ProductResource($product)
+        );
     }
 
     /**

@@ -193,9 +193,9 @@ final class PaymentController extends Controller
      *     )
      * )
      */
-    public function show(Payment $orderStatus): JsonResponse
+    public function show(Payment $payment): JsonResponse
     {
-        return Response::api(HttpResponse::HTTP_OK, 1, $orderStatus);
+        return Response::api(HttpResponse::HTTP_OK, 1, new PaymentResource($payment));
     }
 
     /**
@@ -203,6 +203,13 @@ final class PaymentController extends Controller
      *     path="/api/v1/payment/{uuid}",
      *     tags={"Payment"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="uuid",
+     *         in="path",
+     *         description="UUID parameter",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(

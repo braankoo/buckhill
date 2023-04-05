@@ -18,7 +18,7 @@ final class OrderController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/users/orders",
+     *     path="/api/v1/user/orders",
      *     tags={"User"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(

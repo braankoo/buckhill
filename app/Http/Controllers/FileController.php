@@ -75,7 +75,7 @@ final class FileController extends Controller
                 'name' => $file->getFilename(),
                 'path' => $path,
                 'size' => $file->getSize(),
-                'type' => $file->getType(),
+                'type' => $file->getMimeType(),
             ]
         );
 

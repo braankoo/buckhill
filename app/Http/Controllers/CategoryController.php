@@ -102,7 +102,7 @@ final class CategoryController extends Controller
      *                     type="string",
      *                     description="title",
      *                 ),
-     *                 required={"title", "last_name", "email","password","address","phone_number"}
+     *                 required={"title"}
      *             )
      *         )
      *     ),

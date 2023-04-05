@@ -113,7 +113,7 @@ final class OrderController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="application/x-www-form-urlencoded",
      *             @OA\Schema(
      *                 @OA\Property(
      *                     property="order_status_uuid",
@@ -138,8 +138,14 @@ final class OrderController extends Controller
      *                        @OA\Property(
      *                             property="quantity",
      *                             type="integer"
-     *                         )
-     *                     )
+     *                         ),
+     *                     ),
+     *                   example={
+     *                   {
+     *                      "product": "string",
+     *                      "quantity": 1
+     *                   }
+     *                  }
      *                 ),
      *                 @OA\Property(
      *                     property="address",
@@ -192,13 +198,13 @@ final class OrderController extends Controller
         $attributes = $request->safe()->all();
 
         $status = OrderStatus::whereUuid($attributes['order_status_uuid'])->firstOrFail();
-        $payment = Payment::whereUuid('uuid')->firstOrFail();
+        $payment = Payment::whereUuid($attributes['payment_uuid'])->firstOrFail();
         $user = User::whereId((int) \Auth::id())->firstOrFail();
 
         $order = $user->orders()->create(
             [
-                'products' => json_encode($attributes['products']),
-                'address' => json_encode($attributes['address']),
+                'products' => '[' . $attributes['products'] . ']',
+                'address' => $attributes['address'],
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
                 'payment_id' => $payment->id,
@@ -270,7 +276,7 @@ final class OrderController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="application/json",
+     *             mediaType="application/x-www-form-urlencoded",
      *             @OA\Schema(
      *                 @OA\Property(
      *                     property="order_status_uuid",
@@ -295,8 +301,14 @@ final class OrderController extends Controller
      *                        @OA\Property(
      *                             property="quantity",
      *                             type="integer"
-     *                         )
-     *                     )
+     *                         ),
+     *                     ),
+     *                   example={
+     *                   {
+     *                      "product": "string",
+     *                      "quantity": 1
+     *                   }
+     *                  }
      *                 ),
      *                 @OA\Property(
      *                     property="address",
@@ -348,13 +360,16 @@ final class OrderController extends Controller
     {
         $attributes = $request->safe()->all();
 
-        $status = OrderStatus::whereUuid($attributes['order_status_uuid'])->firstOrFail();
-        $payment = Payment::whereUuid($attributes['payment_uuid'])->firstOrFail();
+        $status = OrderStatus::whereUuid(
+            $attributes['order_status_uuid']
+        )->firstOrFail();
+        $payment = Payment::whereUuid($attributes['payment_uuid'])->firstOrFail(
+        );
 
         $order->update(
             [
-                'products' => json_encode($attributes['products']),
-                'address' => json_encode($attributes['address']),
+                'products' => '[' . $attributes['products'] . ']',
+                'address' => $attributes['address'],
                 'amount' => $attributes['amount'],
                 'order_status_id' => $status->id,
                 'payment_id' => $payment->id,
@@ -449,11 +464,7 @@ final class OrderController extends Controller
 
         $productsAndQuantity = array_map(function ($product) {
             return [
-                'product' => Product::firstWhere(
-                    'uuid',
-                    '=',
-                    $product['product']
-                ),
+                'product' => Product::whereUuid($product['product'])->first(),
                 'quantity' => $product['quantity'],
             ];
         }, $products);

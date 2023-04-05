@@ -45,7 +45,7 @@ final class UserController extends Controller
      *     )
      * )
      */
-    public function show(): JsonResponse
+    public function index(): JsonResponse
     {
         $user = User::whereId(\Auth::id())->firstOrFail();
 
