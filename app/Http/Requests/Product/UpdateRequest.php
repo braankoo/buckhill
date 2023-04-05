@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Product;
 
-use App\Rules\Product\MetaDataRule;
+use App\Rules\JsonRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRequest extends FormRequest
@@ -16,7 +16,7 @@ final class UpdateRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string|MetaDataRule>|string>
+     * @return array<string, array<string|JsonRule>|string>
      */
     public function rules(): array
     {
@@ -25,7 +25,23 @@ final class UpdateRequest extends FormRequest
             'title' => 'required|string|unique:products,title',
             'price' => 'required|numeric',
             'description' => 'required',
-            'metadata' => ['required', new MetaDataRule()],
+            'metadata' => [
+                'required',
+                new JsonRule(
+                    $this->getMetaDataRules()
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMetaDataRules(): array
+    {
+        return [
+            'brand' => 'required|exists:brands,uuid',
+            'image' => 'required|exists:files,uuid',
         ];
     }
 }

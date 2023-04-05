@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Rules\JsonRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateRequest extends FormRequest
@@ -15,19 +16,50 @@ final class UpdateRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string>|string>
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, array<string|JsonRule>|string>
      */
     public function rules(): array
     {
         return [
             'order_status_uuid' => 'required|uuid|exists:order_statuses,uuid',
             'payment_uuid' => 'required|uuid|exists:payments,uuid',
-            'products' => ['required'],
-            'products.*.product' => 'uuid|exists:products,uuid',
-            'products.*.quantity' => 'integer',
-            'address.billing' => 'required|string',
-            'address.shipping' => 'required|string',
-            'amount' => 'numeric|required',
+            'products' => [
+                'required',
+                new JsonRule(
+                    $this->getProductsRule()
+                ),
+            ],
+            'address' => [
+                'required',
+                new JsonRule(
+                    $this->getAddressRule()
+                ),
+            ],
+            'amount' => 'required|numeric',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getProductsRule(): array
+    {
+        return [
+            'product' => 'exists:products,uuid|string|required',
+            'quantity' => 'required|integer|min:1',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAddressRule(): array
+    {
+        return [
+            'billing' => 'required|string',
+            'shipping' => 'required|string',
         ];
     }
 }
