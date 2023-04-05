@@ -41,6 +41,6 @@ final class Payment extends Model
     protected static function boot()
     {
         parent::boot();
-        UuidHelper::boot(new static());
+        UuidHelper::boot(new self());
     }
 }

@@ -19,6 +19,7 @@ final class PaymentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'uuid' => $this->resource->uuid,
             'type' => $this->resource->type,
             'details' => json_decode($this->resource->details),
             'created_at' => $this->resource->created_at,
