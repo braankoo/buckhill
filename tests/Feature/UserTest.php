@@ -39,7 +39,7 @@ class UserTest extends Base
             route('user.login'),
             [
                 'email' => $user->email,
-                'password' => 'password',
+                'password' => 'userpassword',
             ]
         )->assertStatus(200);
     }

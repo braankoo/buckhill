@@ -24,10 +24,12 @@ class AdminTest extends Base
     {
         $user = $this->getAdminUser();
 
+
         $response = $this->post(route('admin.login'), [
             'email' => $user->email,
-            'password' => 'password',
+            'password' => 'userpassword',
         ]);
+
         $response->assertJson(['data' => ['token' => true]]);
 
         $response->assertStatus(200);

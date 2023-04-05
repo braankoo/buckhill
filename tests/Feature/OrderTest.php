@@ -65,6 +65,7 @@ class OrderTest extends Base
         $payment = Payment::factory()->create();
         $oderStatus = OrderStatus::factory()->create();
         $order = Order::factory()->complete()->create(['user_id' => $user->id]);
+        $product = Product::factory()->complete()->create();
 
         $response = $this->httpRequestWithToken(
             $user
@@ -80,14 +81,15 @@ class OrderTest extends Base
                 'payment_uuid' => $payment->uuid,
                 'amount' => '123123123',
                 'products' => json_encode(
-                    ['product' => Product::factory()->complete()->create()->uudi, 'quantity' => rand(1, 20)]
+                    ['product' => $product->uuid, 'quantity' => rand(1, 20)]
                 ),
-                'address' => [
+                'address' => json_encode([
                     'billing' => '123',
                     'shipping' => '123',
-                ],
+                ]),
             ]
         );
+
         $response->assertStatus(200);
         self::assertEquals(Order::where('id', '=', $order->id)->first()->amount, '123123123');
     }
