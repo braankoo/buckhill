@@ -21,9 +21,14 @@ class OrderSeeder extends Seeder
                     [
                         'user_id' => $user->id,
                         'products' => json_encode(
-                            Product::take(rand(1, 20))->get()->map(function ($product) {
-                                return ['product' => $product->uuid, 'quantity' => rand(1, 10)];
-                            })->toArray()
+                            Product::inRandomOrder()->skip(rand(1, 20))
+                                ->take(rand(1, 20))
+                                ->get()->map(function ($product) {
+                                    return [
+                                        'product' => $product->uuid,
+                                        'quantity' => rand(1, 10),
+                                    ];
+                                })->toArray()
                         ),
                     ]
                 );
