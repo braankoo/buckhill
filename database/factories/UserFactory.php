@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -22,7 +23,7 @@ class UserFactory extends Factory
             'last_name' => fake()->lastName(),
             'is_admin' => 0,
             'email' => fake()->safeEmail(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password,
+            'password' => '$2y$10$wo1lL1/McWFAb6Hm9MLVFO4PE7IglgVTN2J/BFKaU5YHnhV8P0Hve', //userpassword
             'avatar' => null,
             'address' => fake()->address(),
             'phone_number' => fake()->phoneNumber(),
